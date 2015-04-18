@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="place_image_height">200dp</dimen>
+    <dimen name="place_image_gradient_height">100dp</dimen>
+    <dimen name="ab_height">56dp</dimen>
+    <dimen name="dummy_view_height">144dp</dimen>
+
+    <dimen name="content_padding">16dp</dimen>
+</resources>

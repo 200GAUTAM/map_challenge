@@ -20,6 +20,11 @@ public class PlacesApiHelper implements Constants {
 
     private static String[] placeTypes = {"bakery", "bar", "cafe", "food", "liquor_store", "meal_delivery", "meal_takeaway", "restaurant"};
 
+    /**
+     * Used to initiate a search for places around a particular location
+     * @param location
+     * @param resultListener
+     */
     public static void getPlacesNearby(Location location,
                                        BaseParser.ResultListener<ArrayList<Place>> resultListener) {
         //Prepare the request URL
@@ -31,6 +36,11 @@ public class PlacesApiHelper implements Constants {
         makePlacesNearbyRequest(builder, resultListener, 0);
     }
 
+    /**
+     * Used when getting subsequent pages of a particular search
+     * @param nextPageToken
+     * @param resultListener
+     */
     public static void getPlacesNearby(String nextPageToken,
                                        BaseParser.ResultListener<ArrayList<Place>> resultListener) {
         //Prepare the request URL
