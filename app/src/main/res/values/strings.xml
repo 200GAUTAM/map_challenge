@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Map Challenge</string>
+    <string name="map_screen_actionbar_title">Find Places</string>
 </resources>

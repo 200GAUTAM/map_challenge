@@ -1,6 +1,7 @@
 package com.suresh.mapchallenge;
 
 import android.app.Application;
+import android.os.Handler;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,12 +14,14 @@ public class APP extends Application {
 
     private static APP instance;
     private RequestQueue requestQueue;
+    private Handler delayHandler; //Handler to post delayed requests
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
 
+        delayHandler = new Handler();
         requestQueue = Volley.newRequestQueue(this);
     }
 
@@ -26,7 +29,16 @@ public class APP extends Application {
         return instance;
     }
 
-    public void addRequestToQueue(Request request) {
+    public void addRequest(Request request) {
         requestQueue.add(request);
+    }
+
+    public void addRequestWithDelay(final Request request, long millis) {
+        delayHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                requestQueue.add(request);
+            }
+        }, millis);
     }
 }

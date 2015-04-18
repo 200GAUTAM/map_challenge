@@ -2,6 +2,7 @@ package com.suresh.mapchallenge.api.parser;
 
 import android.util.Log;
 
+import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
 
 import org.json.JSONArray;
@@ -51,6 +52,12 @@ public class NearbySearchParser extends BaseParser<JSONObject, ArrayList<Place>>
                     JSONObject photoObj = placeObj.getJSONArray("photos").getJSONObject(0); //Only one photo returned in this endpoint
                     place.photoId = photoObj.getString("photo_reference");
                 }
+            }
+
+            //Check if there are more results. Make the request if available
+            if (json.has("next_page_token")) {
+                String nextPageToken = json.getString("next_page_token");
+                PlacesApiHelper.getPlacesNearby(nextPageToken, resultListener);
             }
         } else {
             Log.w("NearbySearchParser", json.toString());

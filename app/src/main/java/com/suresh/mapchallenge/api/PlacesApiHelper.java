@@ -6,7 +6,6 @@ import android.net.Uri;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.suresh.mapchallenge.APP;
-import com.suresh.mapchallenge.R;
 import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.parser.BaseParser;
 import com.suresh.mapchallenge.api.parser.NearbySearchParser;
@@ -25,16 +24,36 @@ public class PlacesApiHelper implements Constants {
                                        BaseParser.ResultListener<ArrayList<Place>> resultListener) {
         //Prepare the request URL
         Uri.Builder builder = Uri.parse(API_NEARBY_SEARCH).buildUpon();
-        addApiKeyParam(builder);
         addTypesParam(builder);
         addLocationParam(builder, location);
         builder.appendQueryParameter("radius", DEFAULT_SEARCH_RADIUS);
+
+        makePlacesNearbyRequest(builder, resultListener, 0);
+    }
+
+    public static void getPlacesNearby(String nextPageToken,
+                                       BaseParser.ResultListener<ArrayList<Place>> resultListener) {
+        //Prepare the request URL
+        Uri.Builder builder = Uri.parse(API_NEARBY_SEARCH).buildUpon();
+        builder.appendQueryParameter("pagetoken", nextPageToken);
+
+        makePlacesNearbyRequest(builder, resultListener, API_NEARBY_SEARCH_REQUEST_DELAY);
+    }
+
+    private static void makePlacesNearbyRequest(Uri.Builder builder,
+                                                BaseParser.ResultListener<ArrayList<Place>> resultListener,
+                                                long requestDelay) {
+        addApiKeyParam(builder);
 
         NearbySearchParser parser = new NearbySearchParser(resultListener);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, builder.build().toString(),
                 null, parser, parser);
 
-        APP.getInstance().addRequestToQueue(request);
+        if (requestDelay > 0) {
+            APP.getInstance().addRequestWithDelay(request, requestDelay);
+        } else {
+            APP.getInstance().addRequest(request);
+        }
     }
 
     private static void addLocationParam(Uri.Builder builder, Location location) {

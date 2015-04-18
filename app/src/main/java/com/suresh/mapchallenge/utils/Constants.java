@@ -12,6 +12,7 @@ public interface Constants {
      */
     public static final float MAP_ZOOM_LEVEL = 14f;
     public static final String DEFAULT_SEARCH_RADIUS = "500";
+    public static final long API_NEARBY_SEARCH_REQUEST_DELAY = 2000;
 
     /*
      * API URLs

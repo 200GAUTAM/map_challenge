@@ -16,6 +16,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
@@ -23,6 +24,7 @@ import com.suresh.mapchallenge.api.parser.BaseParser;
 import com.suresh.mapchallenge.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -32,10 +34,13 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private Location latestLocation;
     private boolean mapLocationInitialised = false;
 
+    private HashMap<Place, Marker> markers = new HashMap<Place, Marker>(); //Storing places and their corresponding markers
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setTitle(R.string.map_screen_actionbar_title);
         initMap();
         initGooglePlayServices();
     }
@@ -83,6 +88,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     private void plotPlaces(ArrayList<Place> places) {
         for (Place p : places) {
+            //Skip existing places
+            if (markers.containsKey(p)) continue;
+
             MarkerOptions marker = new MarkerOptions();
 
             LatLng latLng = new LatLng(p.lat, p.lng);
@@ -91,7 +99,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             marker.title(p.name);
             marker.snippet(p.address);
 
-            map.addMarker(marker);
+            Marker m = map.addMarker(marker);
+            markers.put(p, m);
         }
     }
 
