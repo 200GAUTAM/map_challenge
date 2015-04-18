@@ -1,5 +1,6 @@
 package com.suresh.mapchallenge;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -11,10 +12,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -25,6 +24,7 @@ import com.suresh.mapchallenge.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -35,7 +35,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private Location latestLocation;
     private boolean mapLocationInitialised = false;
 
-    private HashMap<Place, Marker> markers = new HashMap<Place, Marker>(); //Storing places and their corresponding markers
+    private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
+    private HashSet<Place> placeSet = new HashSet<Place>(); //Maintaining hashset of places to prevent duplicates
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +91,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private void plotPlaces(ArrayList<Place> places) {
         for (Place p : places) {
             //Skip existing places
-            if (markers.containsKey(p)) continue;
+            if (placeSet.contains(p)) continue;
 
             MarkerOptions marker = new MarkerOptions();
 
@@ -101,7 +102,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             marker.snippet(p.address);
 
             Marker m = map.addMarker(marker);
-            markers.put(p, m);
+            mpMap.put(m, p);
+            placeSet.add(p);
         }
     }
 
@@ -120,7 +122,11 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        //TODO: Launch detail activity
+        Place selected = mpMap.get(marker);
+
+        Intent i = new Intent(this, DetailActivity.class);
+        i.putExtra(DetailFragment.KEY_PLACE, selected);
+        startActivity(i);
     }
 
     /*
