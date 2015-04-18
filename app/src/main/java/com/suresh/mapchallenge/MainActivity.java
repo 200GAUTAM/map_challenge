@@ -16,7 +16,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.suresh.mapchallenge.api.PlacesApiHelper;
+import com.suresh.mapchallenge.api.model.Place;
+import com.suresh.mapchallenge.api.parser.BaseParser;
 import com.suresh.mapchallenge.utils.Constants;
+
+import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -71,6 +76,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.animateCamera(update, 1, null);
     }
 
+    private void getNearbyPlaces(Location location) {
+        PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
+    }
+
     /*
      * Google Maps callbacks
      */
@@ -94,18 +103,23 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         if (latestLocation != null) {
             Log.v("test", "Location = " + latestLocation.getLatitude() + "," + latestLocation.getLongitude());
             tryInitialisingMapLocation();
+            getNearbyPlaces(latestLocation);
         } else {
+            //TODO: Display error message
             Log.v("test", "Location is null!");
         }
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.v("test", "Connection suspended: " + i);
-    }
+    @Override public void onConnectionSuspended(int i) { Log.v("test", "Connection suspended: " + i); }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.v("test", "Connection Failed: " + connectionResult.toString());
+    @Override public void onConnectionFailed(ConnectionResult connectionResult) { Log.v("test", "Connection Failed: " + connectionResult.toString()); }
+
+    private class NearbySearchResult implements BaseParser.ResultListener<ArrayList<Place>> {
+        @Override
+        public void consumeResult(ArrayList<Place> result) {
+            if (result != null) {
+                Log.v("test", result.toString());
+            }
+        }
     }
 }

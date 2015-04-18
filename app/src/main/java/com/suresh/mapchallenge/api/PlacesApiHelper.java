@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.suresh.mapchallenge.APP;
 import com.suresh.mapchallenge.R;
 import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.parser.BaseParser;
@@ -32,6 +33,8 @@ public class PlacesApiHelper implements Constants {
         NearbySearchParser parser = new NearbySearchParser(resultListener);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, builder.build().toString(),
                 null, parser, parser);
+
+        APP.getInstance().addRequestToQueue(request);
     }
 
     private static void addLocationParam(Uri.Builder builder, Location location) {
