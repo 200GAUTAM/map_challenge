@@ -9,8 +9,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true">
 
-        <ImageView
-            android:id="@+id/placeBannerImg"
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/imgBanner"
             android:layout_width="match_parent"
             android:layout_height="@dimen/place_image_height"
             android:background="@color/banner_img_bg"/>
@@ -38,11 +38,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:textColor="#000000"
-                android:textSize="24dp"
+                android:textSize="24sp"
                 android:text="Something something"
                 android:layout_marginBottom="16dp"/>
 
@@ -51,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="101 Cecil Street, Singapore 201983"
-                android:textSize="16dp"/>
+                android:textSize="16sp"/>
 
             <View
                 android:layout_width="match_parent"
