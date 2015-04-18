@@ -16,6 +16,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.parser.BaseParser;
@@ -80,6 +81,20 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
     }
 
+    private void plotPlaces(ArrayList<Place> places) {
+        for (Place p : places) {
+            MarkerOptions marker = new MarkerOptions();
+
+            LatLng latLng = new LatLng(p.lat, p.lng);
+            marker.position(latLng);
+
+            marker.title(p.name);
+            marker.snippet(p.address);
+
+            map.addMarker(marker);
+        }
+    }
+
     /*
      * Google Maps callbacks
      */
@@ -119,6 +134,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         public void consumeResult(ArrayList<Place> result) {
             if (result != null) {
                 Log.v("test", result.toString());
+                plotPlaces(result);
             }
         }
     }
