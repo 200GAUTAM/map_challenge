@@ -17,7 +17,7 @@ import com.suresh.mapchallenge.api.model.Place;
  */
 public class DetailFragment extends Fragment {
 
-    private static final String KEY_PLACE = "place";
+    public static final String KEY_PLACE = "place";
 
     private Place place;
 
