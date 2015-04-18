@@ -22,7 +22,7 @@ public class PlacesApiHelper implements Constants {
 
     public static void getPlacesNearby(Location location,
                                        BaseParser.ResultListener<ArrayList<Place>> resultListener) {
-        //Prepare the API request URL
+        //Prepare the request URL
         Uri.Builder builder = Uri.parse(API_NEARBY_SEARCH).buildUpon();
         addApiKeyParam(builder);
         addTypesParam(builder);
