@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="places_api_key">AIzaSyARCSobh0ubndXEYN_Op7oaaR6PIMDNVyQ</string>
     <string name="android_maps_api_key">AIzaSyAfuf2BOnPcdL5A_SkbAlcK742rFgO4QZg</string>
 </resources>
