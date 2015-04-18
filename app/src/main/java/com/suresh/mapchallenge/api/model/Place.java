@@ -7,14 +7,14 @@ import java.util.ArrayList;
  */
 public class Place {
 
-    public String id, name, photoId;
+    public String id, name, photoId, address;
     public ArrayList<String> types;
     public double lat, lng;
 
     @Override
     public String toString() {
-        String output = "ID: " + id + ", Name: " + name + ", types: " + types
-                + ", Location: (" + lat + "," + lng + ")";
+        String output = "ID: " + id + ", Name: " + name + ", Address: " + address
+                + ", types: " + types + ", Location: (" + lat + "," + lng + ")";
         if (photoId != null) output += ", Photo ID: " + photoId;
         return output;
     }
