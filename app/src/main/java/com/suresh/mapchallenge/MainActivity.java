@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnInfoWindowClickListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
@@ -112,8 +113,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
+        map.setOnInfoWindowClickListener(this);
 
         tryInitialisingMapLocation();
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        //TODO: Launch detail activity
     }
 
     /*
