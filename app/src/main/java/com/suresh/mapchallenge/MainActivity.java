@@ -1,7 +1,9 @@
 package com.suresh.mapchallenge;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,6 +41,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        googleApiClient.disconnect();
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
     }
@@ -49,16 +63,22 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(Bundle bundle) {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
+        if (location != null) {
+            Log.v("test", "Location = (" + location.getLatitude() + ", " + location.getLongitude() + ")");
+        } else {
+            Log.v("test", "Location is null!");
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.v("test", "Connection suspended: " + i);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        Log.v("test", "Connection Failed: " + connectionResult.toString());
     }
 }
