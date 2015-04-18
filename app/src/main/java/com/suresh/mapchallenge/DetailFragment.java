@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ public class DetailFragment extends Fragment {
     private Place place;
 
     //View handles
+    private Toolbar toolbar;
     private NetworkImageView imgBanner;
     private TextView tvTitle, tvAddress;
 
@@ -44,6 +47,7 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         imgBanner = (NetworkImageView) view.findViewById(R.id.imgBanner);
         tvTitle = (TextView) view.findViewById(R.id.tvTitle);
         tvAddress = (TextView) view.findViewById(R.id.tvAddress);
@@ -54,6 +58,10 @@ public class DetailFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         tvTitle.setText(place.name);
         tvAddress.setText(place.address);

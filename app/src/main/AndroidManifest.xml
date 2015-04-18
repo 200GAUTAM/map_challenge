@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DetailActivity" android:theme="@style/AppTheme.Transparent" />
+        <activity android:name=".DetailActivity" android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Google Play Services Key -->
         <meta-data
