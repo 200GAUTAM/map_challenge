@@ -18,8 +18,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.suresh.mapchallenge.utils.Constants;
 
-public class MainActivity extends ActionBarActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, Constants {
+public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
@@ -59,12 +59,6 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         googleApiClient.disconnect();
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        tryInitialisingMapLocation();
-    }
-
     private void tryInitialisingMapLocation() {
         if (mapLocationInitialised) return; //Map location has already been initialised
 
@@ -75,6 +69,18 @@ public class MainActivity extends ActionBarActivity implements OnMapReadyCallbac
         LatLng latLng = new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude());
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
+    }
+
+    /*
+     * Google Maps callbacks
+     */
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        map.setMyLocationEnabled(true);
+
+        tryInitialisingMapLocation();
     }
 
     /*

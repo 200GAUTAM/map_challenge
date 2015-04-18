@@ -5,5 +5,5 @@ package com.suresh.mapchallenge.utils;
  */
 public interface Constants {
 
-    public static final float MAP_ZOOM_LEVEL = 16F;
+    public static final float MAP_ZOOM_LEVEL = 14f;
 }
