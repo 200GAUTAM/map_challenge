@@ -3,11 +3,12 @@ package com.suresh.mapchallenge.api.parser;
 import android.util.Log;
 
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 
 /**
  * Created by suresh on 18/4/15.
  */
-public abstract class BaseParser<T, V> implements Response.Listener<T> {
+public abstract class BaseParser<T, V> implements Response.Listener<T>, Response.ErrorListener {
 
     protected ResultListener<V> resultListener;
 
@@ -25,6 +26,12 @@ public abstract class BaseParser<T, V> implements Response.Listener<T> {
         }
 
         if (resultListener != null) resultListener.consumeResult(result);
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Log.e("BaseParser", error.toString());
+        if (resultListener != null) resultListener.consumeResult(null);
     }
 
     public abstract V parseResult(T json) throws Exception;

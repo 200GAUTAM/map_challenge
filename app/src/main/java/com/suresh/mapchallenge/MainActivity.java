@@ -92,6 +92,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (latestLocation != null) {
+            Log.v("test", "Location = " + latestLocation.getLatitude() + "," + latestLocation.getLongitude());
             tryInitialisingMapLocation();
         } else {
             Log.v("test", "Location is null!");
