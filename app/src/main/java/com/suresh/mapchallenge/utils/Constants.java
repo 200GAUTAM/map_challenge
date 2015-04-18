@@ -16,5 +16,5 @@ public interface Constants {
     /*
      * API URLs
      */
-    public static final String API_NEARBY_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/output";
+    public static final String API_NEARBY_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 }

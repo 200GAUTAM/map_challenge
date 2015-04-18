@@ -33,8 +33,9 @@ public class NearbySearchParser extends BaseParser<JSONObject, ArrayList<Place>>
                 //Parse basic info
                 place.id = placeObj.getString("id");
                 place.name = placeObj.getString("name");
-                place.lat = placeObj.getJSONObject("location").getDouble("lat");
-                place.lng = placeObj.getJSONObject("location").getDouble("lng");
+                JSONObject locationObj = placeObj.getJSONObject("geometry").getJSONObject("location");
+                place.lat = locationObj.getDouble("lat");
+                place.lng = locationObj.getDouble("lng");
 
                 //Parse types
                 ArrayList<String> types = new ArrayList<String>();
