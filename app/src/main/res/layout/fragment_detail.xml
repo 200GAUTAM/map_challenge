@@ -53,6 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="101 Cecil Street, Singapore 201983"
+                android:textColor="@color/default_text_color"
                 android:textSize="16sp"/>
 
             <View

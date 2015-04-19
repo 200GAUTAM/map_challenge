@@ -24,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_categories"
+            android:textColor="@color/default_text_color"
             android:gravity="center_vertical"
             android:paddingLeft="8dp"
             android:paddingTop="4dp"

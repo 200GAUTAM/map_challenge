@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:gravity="center_vertical">
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="4dp"/>
+
+    <View
+        android:id="@+id/categoryColorSwatch"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginRight="8dp"
+        android:background="#FF45"/>
+
+    <TextView
+        android:id="@+id/tvCategoryName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/default_text_color"
+        android:text="Bakery/Restaurant"/>
+
+</LinearLayout>
