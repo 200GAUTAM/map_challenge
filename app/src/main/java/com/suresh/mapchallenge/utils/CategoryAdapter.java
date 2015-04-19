@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.suresh.mapchallenge.R;
@@ -15,7 +16,7 @@ import com.suresh.mapchallenge.api.model.Place;
 /**
  * Created by suresh on 19/4/15.
  */
-public class CategoryAdapter extends BaseAdapter {
+public class CategoryAdapter extends BaseAdapter implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private Place.Category[] categories = Place.Category.values();
     private boolean[] checked;
@@ -55,27 +56,60 @@ public class CategoryAdapter extends BaseAdapter {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_category, parent, false);
             holder = new ViewHolder();
             view.setTag(holder);
+            view.setOnClickListener(this);
 
             holder.checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+            holder.checkBox.setOnCheckedChangeListener(this);
             holder.categoryColorSwatch = view.findViewById(R.id.categoryColorSwatch);
             holder.tvCategoryName = (TextView) view.findViewById(R.id.tvCategoryName);
         }
+
+        //Updating the data for this view
+        Place.Category c = categories[position];
+        holder.position = position;
 
         //Setting the checkbox state
         holder.checkBox.setChecked(checked[position]);
 
         //Setting the swatch color based on the marker hue
-        int swatchColor = Color.HSVToColor(new float[]{ categories[position].hue, 95, 85 });
+        int swatchColor = Color.HSVToColor(new float[]{ c.hue, 95, 85 });
         holder.categoryColorSwatch.setBackgroundColor(swatchColor);
 
-        holder.tvCategoryName.setText(categories[position].displayName);
+        holder.tvCategoryName.setText(c.displayName);
 
         return view;
+    }
+
+    /**
+     * Triggered when the user clicks anywhere on the row
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        ViewHolder holder = (ViewHolder) v.getTag();
+
+        boolean newState = !checked[holder.position];
+        holder.checkBox.setChecked(newState);
+        checked[holder.position] = newState;
+    }
+
+    /**
+     * Triggered when the user clicks directly on the checkbox
+     * @param buttonView
+     * @param isChecked
+     */
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        View parent = (View) buttonView.getParent();
+        ViewHolder holder = (ViewHolder) parent.getTag();
+
+        checked[holder.position] = isChecked;
     }
 
     private static class ViewHolder {
         CheckBox checkBox;
         View categoryColorSwatch;
         TextView tvCategoryName;
+        int position;
     }
 }
