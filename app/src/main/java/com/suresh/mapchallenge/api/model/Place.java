@@ -38,7 +38,12 @@ public class Place implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        return id.equals(o);
+        if (o instanceof Place) {
+            Place other = (Place) o;
+            return this.id.equals(other.id);
+        } else {
+            return false;
+        }
     }
 
     @Override
