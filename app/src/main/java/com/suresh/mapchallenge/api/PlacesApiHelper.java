@@ -12,13 +12,13 @@ import com.suresh.mapchallenge.api.parser.NearbySearchParser;
 import com.suresh.mapchallenge.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Created by suresh on 18/4/15.
  */
 public class PlacesApiHelper implements Constants {
-
-    private static String[] placeTypes = {"bakery", "bar", "cafe", "food", "liquor_store", "meal_delivery", "meal_takeaway", "restaurant"};
 
     /**
      * Used to initiate a search for places around a particular location
@@ -77,9 +77,15 @@ public class PlacesApiHelper implements Constants {
     private static void addTypesParam(Uri.Builder builder) {
         StringBuilder typesParamStr = new StringBuilder();
 
-        for (int i = 0; i < placeTypes.length; i++) {
-            typesParamStr.append(placeTypes[i]);
-            if (i < placeTypes.length - 1) typesParamStr.append("|");
+        ArrayList<String> placeTypes = new ArrayList<String>();
+        for (Place.Category c : Place.Category.values()) {
+            placeTypes.addAll(Arrays.asList(c.types));
+        }
+
+        Iterator<String> iter = placeTypes.iterator();
+        while (iter.hasNext()) {
+            typesParamStr.append(iter.next());
+            if (iter.hasNext()) typesParamStr.append("|");
         }
 
         builder.appendQueryParameter("types", typesParamStr.toString());

@@ -11,11 +11,25 @@ public class Place implements Serializable {
     public String id, name, photoId, address;
     public ArrayList<String> types;
     public double lat, lng;
+    public Category category;
+
+    public enum Category {
+        BAR(new String[]{"bar", "liquor_store"}),
+        BAKERY_CAFE(new String[]{"bakery", "cafe"}),
+        RESTAURANT(new String[]{"food", "restaurant", "meal_delivery", "meal_takeaway"});
+
+        public String[] types; //Map API types that belong to a particular category
+
+        Category(String[] types) {
+            this.types = types;
+        }
+    }
 
     @Override
     public String toString() {
         String output = "ID: " + id + ", Name: " + name + ", Address: " + address
-                + ", types: " + types + ", Location: (" + lat + "," + lng + ")";
+                + ", Category: " + category + ", types: " + types
+                + ", Location: (" + lat + "," + lng + ")";
         if (photoId != null) output += ", Photo ID: " + photoId;
         return output;
     }
