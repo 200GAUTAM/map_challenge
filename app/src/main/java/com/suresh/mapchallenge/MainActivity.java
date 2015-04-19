@@ -1,12 +1,14 @@
 package com.suresh.mapchallenge;
 
 import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -120,6 +122,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         categoryDropdownSection.animate()
                 .setDuration(FADE_ANIM_DURATION)
+                .setInterpolator(new DecelerateInterpolator())
                 .alpha(alphaVal)
                 .setListener(new FadeAnimationListener(categoryDropdownSection, vis))
                 .start();

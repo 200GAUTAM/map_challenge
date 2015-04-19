@@ -14,7 +14,7 @@ public interface Constants {
     public static final String DEFAULT_SEARCH_RADIUS = "500";
     public static final String MAX_IMAGE_WIDTH = "1000"; //Used in the places photos request
     public static final long API_NEARBY_SEARCH_REQUEST_DELAY = 2000;
-    public static final int FADE_ANIM_DURATION = 150;
+    public static final int FADE_ANIM_DURATION = 200;
 
     /*
      * API URLs
