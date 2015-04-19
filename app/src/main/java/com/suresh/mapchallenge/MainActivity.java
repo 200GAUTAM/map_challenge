@@ -337,6 +337,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map = googleMap;
         map.setMyLocationEnabled(true);
         map.setOnMarkerDragListener(new MarkerDragListener());
+        map.setOnMyLocationButtonClickListener(new MyLocationButtonListener());
         map.setOnInfoWindowClickListener(this);
 
         trySettingMapPadding();
@@ -365,6 +366,19 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         public void onMarkerDragEnd(Marker marker) {
             searchLocation = marker.getPosition();
             getNearbyPlaces();
+        }
+    }
+
+    private class MyLocationButtonListener implements GoogleMap.OnMyLocationButtonClickListener {
+
+        @Override
+        public boolean onMyLocationButtonClick() {
+            Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            if (currentLocation != null) {
+                searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                restartSearch();
+            }
+            return false;
         }
     }
 
