@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
      */
     private static final String KEY_PLACES = "place_set";
     private static final String KEY_CATEGORY_SELECTION = "selected_categories";
-    private static final String KEY_MAP_INITIALISED = "map_initialised";
+    private static final String KEY_SEARCH_LOCATION_MARKER = "search_location_marker";
 
     //View handles
     private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, errorSection;
@@ -107,6 +107,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             paddingSet = false;
             adapter = new CategoryAdapter(this);
         } else {
+            searchLocation = savedInstanceState.getParcelable(KEY_SEARCH_LOCATION_MARKER);
             placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
             paddingSet = false;
 
@@ -235,7 +236,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private void setCameraToCurrentUserLocation() {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(searchLocation, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
+        drawSearchLocationMarker();
+    }
 
+    private void drawSearchLocationMarker() {
         MarkerOptions locationMarker = new MarkerOptions();
         locationMarker.position(searchLocation);
         locationMarker.title(getString(R.string.search_location));
@@ -312,6 +316,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         outState.putSerializable(KEY_PLACES, placeSet);
         outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
+        outState.putParcelable(KEY_SEARCH_LOCATION_MARKER, searchLocation);
     }
 
     @Override
@@ -334,6 +339,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         //Restore markers if available
         if (placeSet.size() > 0) plotPlaces(placeSet, false);
+        if (searchLocation != null) drawSearchLocationMarker();
     }
 
     @Override
@@ -370,13 +376,16 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (currentLocation != null) {
-            searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
+            //Hide the error section if visible (Happens if the user returns to the app after changing GPS settings)
             if (errorSection.isShown()) toggleGPSErrorSection(false);
-            setCameraToCurrentUserLocation(); //Initialise the map to the user's current location
 
-            //Trigger API call if there is no existing data
-            if (placeSet.isEmpty()) getNearbyPlaces(searchLocation);
+            if (searchLocation != null) return; //Abort if we already have data (happens when screen rotates, user returns to screen/app etc.)
+
+            //Initialise screen
+            searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            setCameraToCurrentUserLocation(); //Initialise the map to the user's current location
+            getNearbyPlaces(searchLocation); //Trigger the API call to get nearby places
+
         } else { //Location/GPS not enabled on device. Display error
             toggleGPSErrorSection(true);
         }
