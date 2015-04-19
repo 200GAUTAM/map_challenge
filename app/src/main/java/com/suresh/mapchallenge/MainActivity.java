@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -46,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private Location latestLocation;
-    private boolean mapInitialised = false, paddingSet = false;
+    private boolean mapInitialised, paddingSet;
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
@@ -58,6 +59,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
      */
     private static final String KEY_PLACES = "place_set";
     private static final String KEY_CATEGORY_SELECTION = "selected_categories";
+    private static final String KEY_MAP_INITIALISED = "map_initialised";
+    private static final String KEY_PADDING_SET = "padding_set";
 
     //View handles
     private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, loadingSection;
@@ -89,12 +92,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         }
         lv.setAdapter(adapter);
 
-        //Initialising/restoring the list of places
-        if (savedInstanceState == null) {
-            placeSet = new HashSet<Place>();
-        } else {
-            placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
-        }
+        //Restoring variables if the screen is rotated
+        restoreVariables(savedInstanceState);
     }
 
     private void initMap() {
@@ -117,6 +116,20 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         int margin = (int) getResources().getDimension(R.dimen.category_dropdown_margin);
         mapTopPadding = (bottom - top) + margin;
         trySettingMapPadding();
+    }
+
+    private void restoreVariables(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            Log.w("test", "savedInstanceState is NULL");
+            placeSet = new HashSet<Place>();
+            mapInitialised = false;
+            paddingSet = false;
+        } else {
+            Log.w("test", "savedInstanceState is NOT NULL");
+            placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
+            mapInitialised = savedInstanceState.getBoolean(KEY_MAP_INITIALISED);
+            paddingSet = savedInstanceState.getBoolean(KEY_PADDING_SET);
+        }
     }
 
     @Override
@@ -309,6 +322,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         outState.putSerializable(KEY_PLACES, placeSet);
         outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
+        outState.putBoolean(KEY_MAP_INITIALISED, mapInitialised);
+        outState.putBoolean(KEY_PADDING_SET, paddingSet);
     }
 
     /*
