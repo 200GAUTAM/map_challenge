@@ -277,6 +277,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
             marker.title(p.name);
             marker.snippet(p.address);
+            marker.visible(adapter.isCategoryChosen(p.category));
             marker.icon(BitmapDescriptorFactory.defaultMarker(p.category.hue));
 
             Marker m = map.addMarker(marker);

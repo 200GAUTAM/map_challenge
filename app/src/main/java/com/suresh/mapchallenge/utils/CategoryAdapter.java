@@ -46,6 +46,14 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
         return checked;
     }
 
+    public boolean isCategoryChosen(Place.Category c) {
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i] == c) return checked[i];
+        }
+
+        return false;
+    }
+
     @Override
     public int getCount() {
         return categories.length;
