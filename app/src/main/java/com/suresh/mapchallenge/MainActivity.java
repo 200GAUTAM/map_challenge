@@ -45,7 +45,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private Location latestLocation;
-    private boolean mapInitialised, paddingSet = false;
+    private boolean paddingSet = false;
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
@@ -70,18 +70,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         getSupportActionBar().setTitle(R.string.map_screen_actionbar_title);
         initMap();
         initGooglePlayServices();
-
-        //Setting up the category dropdown and other view handles
-        categoryDropdownToggle = findViewById(R.id.categoryDropdownToggle);
-        categoryDropdownToggle.setOnClickListener(this);
-        categoryDropdownToggle.addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
-        categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
-        touchInterceptor = findViewById(R.id.touchInterceptor);
-        loadingSection = findViewById(R.id.loadingSection);
-        listView = (ListView) findViewById(R.id.categoryList);
-        listView.setDividerHeight(0);
-
-        //Initialising or restoring variables (if screen is rotated)
+        initViews();
         initOrRestoreVariables(savedInstanceState);
     }
 
@@ -98,24 +87,24 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
                 .build();
     }
 
-    @Override
-    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        v.removeOnLayoutChangeListener(this);
-
-        int margin = (int) getResources().getDimension(R.dimen.category_dropdown_margin);
-        mapTopPadding = (bottom - top) + margin;
-        trySettingMapPadding();
+    private void initViews() {
+        categoryDropdownToggle = findViewById(R.id.categoryDropdownToggle);
+        categoryDropdownToggle.setOnClickListener(this);
+        categoryDropdownToggle.addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
+        categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
+        touchInterceptor = findViewById(R.id.touchInterceptor);
+        loadingSection = findViewById(R.id.loadingSection);
+        listView = (ListView) findViewById(R.id.categoryList);
+        listView.setDividerHeight(0);
     }
 
     private void initOrRestoreVariables(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             placeSet = new HashSet<Place>();
-            mapInitialised = false;
             paddingSet = false;
             adapter = new CategoryAdapter(this);
         } else {
             placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
-            mapInitialised = savedInstanceState.getBoolean(KEY_MAP_INITIALISED);
             paddingSet = false;
 
             boolean[] checked = savedInstanceState.getBooleanArray(KEY_CATEGORY_SELECTION);
@@ -123,6 +112,15 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         }
 
         listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        v.removeOnLayoutChangeListener(this);
+
+        int margin = (int) getResources().getDimension(R.dimen.category_dropdown_margin);
+        mapTopPadding = (bottom - top) + margin;
+        trySettingMapPadding();
     }
 
     @Override
@@ -221,13 +219,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         googleApiClient.disconnect();
     }
 
-    private void tryInitialisingMap() {
-        if (mapInitialised) return; //Map location has already been initialised
-
-        if (map == null || latestLocation == null) return; //We don't have all info yet
-
-        mapInitialised = true;
-
+    private void setCameraToCurrentUserLocation() {
         LatLng latLng = new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude());
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
@@ -316,7 +308,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         outState.putSerializable(KEY_PLACES, placeSet);
         outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
-        outState.putBoolean(KEY_MAP_INITIALISED, mapInitialised);
     }
 
     @Override
@@ -335,8 +326,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.setMyLocationEnabled(true);
         map.setOnInfoWindowClickListener(this);
 
-        Log.v("test", "Calling from onMapReady()");
-        tryInitialisingMap();
         trySettingMapPadding();
 
         //Restore markers if available
@@ -365,8 +354,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (latestLocation != null) {
-            Log.v("test", "Calling from onConnected()");
-            tryInitialisingMap();
+            setCameraToCurrentUserLocation();
         } else {
             //TODO: Display error message
             Log.v("test", "Location is null!");
