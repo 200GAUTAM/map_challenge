@@ -87,7 +87,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         if (savedInstanceState == null) {
             adapter = new CategoryAdapter(this);
         } else {
-            boolean[] checked = savedInstanceState.getBooleanArray(KEY_CATEGORY_SELECTION);
+            HashSet<Place.Category> checked = (HashSet<Place.Category>) savedInstanceState
+                    .getSerializable(KEY_CATEGORY_SELECTION);
             adapter = new CategoryAdapter(this, checked);
         }
         lv.setAdapter(adapter);
@@ -120,12 +121,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     private void restoreVariables(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            Log.w("test", "savedInstanceState is NULL");
             placeSet = new HashSet<Place>();
             mapInitialised = false;
             paddingSet = false;
         } else {
-            Log.w("test", "savedInstanceState is NOT NULL");
             placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
             mapInitialised = savedInstanceState.getBoolean(KEY_MAP_INITIALISED);
             paddingSet = savedInstanceState.getBoolean(KEY_PADDING_SET);
@@ -320,11 +319,19 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.v("test", "onSaveInstanceState() called");
 
         outState.putSerializable(KEY_PLACES, placeSet);
-        outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
+        outState.putSerializable(KEY_CATEGORY_SELECTION, adapter.getChecked());
         outState.putBoolean(KEY_MAP_INITIALISED, mapInitialised);
         outState.putBoolean(KEY_PADDING_SET, paddingSet);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Log.v("test", "onRestoreInstanceState() called");
     }
 
     /*
