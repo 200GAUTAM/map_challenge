@@ -14,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -100,6 +101,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
             marker.title(p.name);
             marker.snippet(p.address);
+            marker.icon(BitmapDescriptorFactory.defaultMarker(p.category.hue));
 
             Marker m = map.addMarker(marker);
             mpMap.put(m, p);

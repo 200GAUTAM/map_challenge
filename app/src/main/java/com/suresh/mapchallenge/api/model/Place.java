@@ -14,13 +14,15 @@ public class Place implements Serializable {
     public Category category;
 
     public enum Category {
-        BAR(new String[]{"bar", "liquor_store"}),
-        BAKERY_CAFE(new String[]{"bakery", "cafe"}),
-        RESTAURANT(new String[]{"food", "restaurant", "meal_delivery", "meal_takeaway"});
+        BAR(196, new String[]{"bar", "liquor_store"}),
+        BAKERY_CAFE(44, new String[]{"bakery", "cafe"}),
+        RESTAURANT(143, new String[]{"food", "restaurant", "meal_delivery", "meal_takeaway"});
 
+        public float hue; //Hue value to set the marker colour
         public String[] types; //Map API types that belong to a particular category
 
-        Category(String[] types) {
+        Category(float hue, String[] types) {
+            this.hue = hue;
             this.types = types;
         }
     }
