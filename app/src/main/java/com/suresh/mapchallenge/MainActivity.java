@@ -236,6 +236,15 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         LatLng latLng = new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude());
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
+
+        MarkerOptions locationMarker = new MarkerOptions();
+        locationMarker.position(new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude()));
+        locationMarker.title(getString(R.string.search_location));
+        locationMarker.snippet(getString(R.string.search_location_hint));
+        locationMarker.icon(BitmapDescriptorFactory.defaultMarker(SEARCH_LOCATION_MARKER_HUE));
+        locationMarker.draggable(true);
+
+        map.addMarker(locationMarker);
     }
 
     private void trySettingMapPadding() {
@@ -357,8 +366,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (latestLocation != null) {
-            toggleGPSErrorSection(false);
-            setCameraToCurrentUserLocation();
+            if (errorSection.isShown()) toggleGPSErrorSection(false);
+            setCameraToCurrentUserLocation(); //Initialise the map to the user's current location
 
             //Trigger API call if there is no existing data
             if (placeSet.isEmpty()) getNearbyPlaces(latestLocation);
@@ -372,8 +381,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override public void onConnectionFailed(ConnectionResult connectionResult) { Log.v("test", "Connection Failed: " + connectionResult.toString()); }
 
     private void toggleGPSErrorSection(boolean shouldDisplay) {
-        if (errorSection.isShown() == shouldDisplay) return; //State is already toggled. No need to change anything
-
         float alphaVal = (shouldDisplay) ? 1 : 0;
         int visibility = (shouldDisplay) ? View.VISIBLE : View.GONE;
 

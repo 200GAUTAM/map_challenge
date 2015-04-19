@@ -6,4 +6,6 @@
     <string name="search_again">Search Again</string>
     <string name="gps_error">Please turn on your GPS!</string>
     <string name="location_settings">Location Settings</string>
+    <string name="search_location">Search Location</string>
+    <string name="search_location_hint">Drag to change search area</string>
 </resources>

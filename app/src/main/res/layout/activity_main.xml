@@ -79,6 +79,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
+        android:visibility="gone"
+        android:alpha="0"
         android:background="@color/loading_section_bg">
 
         <ImageView

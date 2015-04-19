@@ -11,6 +11,7 @@ public interface Constants {
      * Default values
      */
     public static final float MAP_ZOOM_LEVEL = 14f;
+    public static final float SEARCH_LOCATION_MARKER_HUE = 97f;
     public static final String DEFAULT_SEARCH_RADIUS = "500";
     public static final String MAX_IMAGE_WIDTH = "1000"; //Used in the places photos request
     public static final long API_NEARBY_SEARCH_REQUEST_DELAY = 2000;
