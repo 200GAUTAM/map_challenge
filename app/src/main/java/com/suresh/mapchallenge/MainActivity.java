@@ -66,6 +66,19 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         lv.setAdapter(new CategoryAdapter());
     }
 
+    private void initMap() {
+        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag);
+        mapFrag.getMapAsync(this);
+    }
+
+    private void initGooglePlayServices() {
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         v.removeOnLayoutChangeListener(this);
@@ -96,19 +109,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         } else {
             touchInterceptor.setOnClickListener(null);
         }
-    }
-
-    private void initMap() {
-        SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFrag);
-        mapFrag.getMapAsync(this);
-    }
-
-    private void initGooglePlayServices() {
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
     }
 
     @Override
