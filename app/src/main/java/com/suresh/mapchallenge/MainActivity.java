@@ -416,19 +416,19 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override public void onConnectionFailed(ConnectionResult connectionResult) { Log.v("test", "Connection Failed: " + connectionResult.toString()); }
 
     private void toggleGPSErrorSection(boolean shouldDisplay) {
-        animateTransition(errorSection, shouldDisplay);
+        animateTransition(errorSection, 600, shouldDisplay);
     }
 
     private void toggleLoadingSection(boolean shouldDisplay) {
-        animateTransition(loadingSection, shouldDisplay);
+        animateTransition(loadingSection, 600, shouldDisplay);
     }
 
-    private void animateTransition(View view, boolean shouldDisplay) {
+    private void animateTransition(View view, long duration, boolean shouldDisplay) {
         float alphaVal = (shouldDisplay) ? 1 : 0;
         int visibility = (shouldDisplay) ? View.VISIBLE : View.GONE;
 
         view.animate()
-                .setDuration(400)
+                .setDuration(duration)
                 .setInterpolator(new DecelerateInterpolator())
                 .alpha(alphaVal)
                 .setListener(new FadeAnimationListener(view, visibility))
