@@ -3,4 +3,5 @@
     <string name="map_screen_actionbar_title">Find Places</string>
     <string name="label_categories">Categories</string>
     <string name="loading_message">Searching&#8230;</string>
+    <string name="search_again">Search Again</string>
 </resources>

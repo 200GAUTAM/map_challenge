@@ -6,6 +6,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
@@ -92,6 +95,26 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         int margin = (int) getResources().getDimension(R.dimen.category_dropdown_margin);
         mapTopPadding = (bottom - top) + margin;
         trySettingMapPadding();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_action_search_again:
+                restartSearch();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
     }
 
     /**
@@ -225,6 +248,22 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             mpMap.put(m, p);
             placeSet.add(p);
         }
+    }
+
+    private void restartSearch() {
+        latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+        if (latestLocation == null) {
+            //TODO: Handle error
+        }
+
+        //Clear existing data
+        mpMap.clear();
+        placeSet.clear();
+        map.clear();
+
+        //Trigger search API call again
+        getNearbyPlaces(latestLocation);
     }
 
     /**
