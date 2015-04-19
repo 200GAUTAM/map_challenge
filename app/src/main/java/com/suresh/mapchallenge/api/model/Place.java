@@ -14,9 +14,10 @@ public class Place implements Serializable {
     public Category category;
 
     public enum Category {
-        BAR(196, new String[]{"bar", "liquor_store"}),
-        BAKERY_CAFE(44, new String[]{"bakery", "cafe"}),
-        RESTAURANT(143, new String[]{"food", "restaurant", "meal_delivery", "meal_takeaway"});
+        BAR(0, new String[]{"bar", "liquor_store"}),
+        BAKERY_CAFE(281, new String[]{"bakery", "cafe"}),
+        RESTAURANT(196, new String[]{"food", "restaurant"}),
+        DELIVERY_TAKEAWAY(44, new String[]{"meal_delivery", "meal_takeaway"});
 
         public float hue; //Hue value to set the marker colour
         public String[] types; //Map API types that belong to a particular category
