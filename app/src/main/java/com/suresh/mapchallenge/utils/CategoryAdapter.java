@@ -18,7 +18,15 @@ import com.suresh.mapchallenge.api.model.Place;
 public class CategoryAdapter extends BaseAdapter {
 
     private Place.Category[] categories = Place.Category.values();
-    private boolean[] checked = new boolean[categories.length];
+    private boolean[] checked;
+
+    public CategoryAdapter() {
+        checked = new boolean[categories.length];
+
+        for (int i = 0; i < checked.length; i++) {
+            checked[i] = true;
+        }
+    }
 
     @Override
     public int getCount() {
