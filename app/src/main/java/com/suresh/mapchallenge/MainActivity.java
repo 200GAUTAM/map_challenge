@@ -38,14 +38,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private Location latestLocation;
-    private boolean mapInitialised = false;
-    private int mapTopPadding; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
+    private boolean mapInitialised = false, paddingSet = false;
+    private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
     private HashSet<Place> placeSet = new HashSet<Place>(); //Maintaining hashset of places to prevent duplicates
 
     //View handles
-    private View categoryDropdownToggle, categoryDropdownSection;
+    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         categoryDropdownToggle.setOnClickListener(this);
         categoryDropdownToggle.addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
         categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
+        touchInterceptor = findViewById(R.id.touchInterceptor);
         ListView lv = (ListView) findViewById(R.id.categoryList);
         lv.setDividerHeight(0);
         lv.setAdapter(new CategoryAdapter());
@@ -71,9 +72,13 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         int margin = (int) getResources().getDimension(R.dimen.category_dropdown_margin);
         mapTopPadding = (bottom - top) + margin;
-        map.setPadding(0, mapTopPadding, 0, 0);
+        trySettingMapPadding();
     }
 
+    /**
+     * Triggers showing/hiding of the category dropdown list
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         showHideDropdown();
@@ -84,6 +89,13 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
                 ? View.VISIBLE
                 : View.GONE;
         categoryDropdownSection.setVisibility(vis);
+        touchInterceptor.setVisibility(vis);
+
+        if (vis == View.VISIBLE) {
+            touchInterceptor.setOnClickListener(this);
+        } else {
+            touchInterceptor.setOnClickListener(null);
+        }
     }
 
     private void initMap() {
@@ -126,6 +138,16 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         getNearbyPlaces(latestLocation);
     }
 
+    private void trySettingMapPadding() {
+        if (paddingSet) return; //Map's padding has already been set
+
+        if (map == null || mapTopPadding == -1) return; //We don't have all info yet
+
+        paddingSet = true;
+
+        map.setPadding(0, mapTopPadding, 0, 0);
+    }
+
     private void getNearbyPlaces(Location location) {
         PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
     }
@@ -161,6 +183,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.setOnInfoWindowClickListener(this);
 
         tryInitialisingMap();
+        trySettingMapPadding();
     }
 
     @Override
