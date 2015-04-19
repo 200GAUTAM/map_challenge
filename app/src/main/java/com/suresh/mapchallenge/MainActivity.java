@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
-    private Location latestLocation;
+    private LatLng searchLocation;
     private boolean paddingSet = false;
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
@@ -233,12 +233,11 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void setCameraToCurrentUserLocation() {
-        LatLng latLng = new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude());
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM_LEVEL);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(searchLocation, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
 
         MarkerOptions locationMarker = new MarkerOptions();
-        locationMarker.position(new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude()));
+        locationMarker.position(searchLocation);
         locationMarker.title(getString(R.string.search_location));
         locationMarker.snippet(getString(R.string.search_location_hint));
         locationMarker.icon(BitmapDescriptorFactory.defaultMarker(SEARCH_LOCATION_MARKER_HUE));
@@ -257,7 +256,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.setPadding(0, mapTopPadding, 0, 0);
     }
 
-    private void getNearbyPlaces(Location location) {
+    private void getNearbyPlaces(LatLng location) {
         //TODO: toggle loading section
         PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
     }
@@ -284,20 +283,13 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void restartSearch() {
-        latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-
-        if (latestLocation == null) {
-            //TODO: Handle error
-            return;
-        }
-
         //Clear existing data
         mpMap.clear();
         placeSet.clear();
         map.clear();
 
         //Trigger search API call again
-        getNearbyPlaces(latestLocation);
+        getNearbyPlaces(searchLocation);
     }
 
     /**
@@ -353,6 +345,18 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         startActivity(i);
     }
 
+    private class MarkerDragListener implements GoogleMap.OnMarkerDragListener {
+
+        @Override public void onMarkerDragStart(Marker marker) { }
+
+        @Override public void onMarkerDrag(Marker marker) { }
+
+        @Override
+        public void onMarkerDragEnd(Marker marker) {
+
+        }
+    }
+
     /*
      * Google Play Services callbacks (Location API stuff)
      */
@@ -363,14 +367,16 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
      */
     @Override
     public void onConnected(Bundle bundle) {
-        latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
-        if (latestLocation != null) {
+        if (currentLocation != null) {
+            searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+
             if (errorSection.isShown()) toggleGPSErrorSection(false);
             setCameraToCurrentUserLocation(); //Initialise the map to the user's current location
 
             //Trigger API call if there is no existing data
-            if (placeSet.isEmpty()) getNearbyPlaces(latestLocation);
+            if (placeSet.isEmpty()) getNearbyPlaces(searchLocation);
         } else { //Location/GPS not enabled on device. Display error
             toggleGPSErrorSection(true);
         }
