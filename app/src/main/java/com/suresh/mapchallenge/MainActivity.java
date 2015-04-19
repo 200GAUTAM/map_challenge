@@ -118,8 +118,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             mapInitialised = savedInstanceState.getBoolean(KEY_MAP_INITIALISED);
             paddingSet = false;
 
-            HashSet<Place.Category> checked = (HashSet<Place.Category>) savedInstanceState
-                    .getSerializable(KEY_CATEGORY_SELECTION);
+            boolean[] checked = savedInstanceState.getBooleanArray(KEY_CATEGORY_SELECTION);
             Log.v("test", "Checked: " + checked);
             adapter = new CategoryAdapter(this, checked);
         }
@@ -317,7 +316,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         super.onSaveInstanceState(outState);
 
         outState.putSerializable(KEY_PLACES, placeSet);
-        outState.putSerializable(KEY_CATEGORY_SELECTION, adapter.getChecked());
+        outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
         outState.putBoolean(KEY_MAP_INITIALISED, mapInitialised);
     }
 

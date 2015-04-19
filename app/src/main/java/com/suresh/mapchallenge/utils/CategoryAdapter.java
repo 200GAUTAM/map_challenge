@@ -14,26 +14,26 @@ import android.widget.TextView;
 import com.suresh.mapchallenge.R;
 import com.suresh.mapchallenge.api.model.Place;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 /**
  * Created by suresh on 19/4/15.
  */
 public class CategoryAdapter extends BaseAdapter implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private Place.Category[] categories = Place.Category.values();
-    private HashSet<Place.Category> checked;
+    private boolean[] checked;
     private OnCategoryChangedListener listener;
 
     public CategoryAdapter(OnCategoryChangedListener listener) {
         this(listener, null);
     }
 
-    public CategoryAdapter(OnCategoryChangedListener listener, HashSet<Place.Category> checked) {
+    public CategoryAdapter(OnCategoryChangedListener listener, boolean[] checked) {
         //Initialising the checked boolean array if required
         if (checked == null) {
-            this.checked = new HashSet<Place.Category>(Arrays.asList(categories));
+            this.checked = new boolean[categories.length];
+            for (int i = 0; i < this.checked.length; i++) {
+                this.checked[i] = true;
+            }
         } else {
             this.checked = checked;
         }
@@ -42,12 +42,16 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
         this.listener = listener;
     }
 
-    public HashSet<Place.Category> getChecked() {
+    public boolean[] getChecked() {
         return checked;
     }
 
     public boolean isCategoryChosen(Place.Category c) {
-        return checked.contains(c);
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i] == c) return checked[i];
+        }
+
+        return false;
     }
 
     @Override
@@ -90,8 +94,8 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
         holder.position = position;
 
         //Setting the checkbox state if required
-        if (holder.checkBox.isChecked() != checked.contains(c)) {
-            holder.checkBox.setChecked(checked.contains(c));
+        if (holder.checkBox.isChecked() != checked[position]) {
+            holder.checkBox.setChecked(checked[position]);
         }
 
         //Setting the swatch color based on the marker hue
@@ -110,15 +114,12 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
     @Override
     public void onClick(View v) {
         ViewHolder holder = (ViewHolder) v.getTag();
-        Place.Category c = categories[holder.position];
 
-        boolean newState = !checked.contains(c);
+        boolean newState = !checked[holder.position];
         holder.checkBox.setChecked(newState);
+        checked[holder.position] = newState;
 
-        if (newState) checked.add(c);
-        else checked.remove(c);
-
-        if (listener != null) listener.onCategoryOptionChanged(c, newState);
+        if (listener != null) listener.onCategoryOptionChanged(categories[holder.position], newState);
     }
 
     /**
@@ -131,7 +132,7 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
         View parent = (View) buttonView.getParent();
         ViewHolder holder = (ViewHolder) parent.getTag();
 
-        checked.add(categories[holder.position]);
+        checked[holder.position] = isChecked;
         if (listener != null) listener.onCategoryOptionChanged(categories[holder.position], isChecked);
     }
 
