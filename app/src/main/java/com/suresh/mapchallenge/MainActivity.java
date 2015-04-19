@@ -223,9 +223,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         LatLng latLng = new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude());
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
-
-        //Trigger API call to get nearby places
-        getNearbyPlaces(latestLocation);
     }
 
     private void trySettingMapPadding() {
@@ -355,6 +352,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         if (latestLocation != null) {
             setCameraToCurrentUserLocation();
+
+            //Trigger API call if there is no existing data
+            if (placeSet.isEmpty()) getNearbyPlaces(latestLocation);
         } else {
             //TODO: Display error message
             Log.v("test", "Location is null!");
