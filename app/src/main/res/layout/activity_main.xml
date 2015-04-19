@@ -76,6 +76,7 @@
         android:orientation="vertical"
         android:background="@color/loading_section_bg"
         android:visibility="gone"
+        android:alpha="0"
         android:gravity="center">
 
         <ProgressBar

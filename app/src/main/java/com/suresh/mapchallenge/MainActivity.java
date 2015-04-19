@@ -196,8 +196,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void getNearbyPlaces(Location location) {
-        loadingSection.setVisibility(View.VISIBLE);
         loadingSection.setOnClickListener(this);
+        loadingSection.animate()
+                .setDuration(FADE_ANIM_DURATION)
+                .setInterpolator(new DecelerateInterpolator())
+                .alpha(1)
+                .setListener(new FadeAnimationListener(loadingSection, View.VISIBLE))
+                .start();
+
         PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
     }
 
@@ -288,8 +294,13 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             }
 
             if (!moreResults) {
-                loadingSection.setVisibility(View.GONE);
                 loadingSection.setOnClickListener(null);
+                loadingSection.animate()
+                        .setDuration(FADE_ANIM_DURATION)
+                        .setInterpolator(new DecelerateInterpolator())
+                        .alpha(0)
+                        .setListener(new FadeAnimationListener(loadingSection, View.GONE))
+                        .start();
             }
         }
     }
