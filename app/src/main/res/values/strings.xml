@@ -2,7 +2,7 @@
     <string name="app_name">Map Challenge</string>
     <string name="map_screen_actionbar_title">Find Places</string>
     <string name="label_categories">Categories</string>
-    <string name="loading_message">Searching&#8230;</string>
+    <string name="loading_message">Finding places&#8230;</string>
     <string name="search_again">Search Again</string>
     <string name="gps_error">Please turn on your GPS!</string>
     <string name="location_settings">Location Settings</string>

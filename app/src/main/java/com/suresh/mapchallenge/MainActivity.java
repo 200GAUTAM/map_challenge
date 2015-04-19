@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private static final String KEY_SEARCH_LOCATION_MARKER = "search_location_marker";
 
     //View handles
-    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, errorSection;
+    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, errorSection, loadingSection;
     private ListView listView;
 
     @Override
@@ -96,6 +96,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
         touchInterceptor = findViewById(R.id.touchInterceptor);
         errorSection = findViewById(R.id.errorSection);
+        loadingSection = findViewById(R.id.loadingSection);
         errorSection.setOnTouchListener(this);
         listView = (ListView) findViewById(R.id.categoryList);
         listView.setDividerHeight(0);
@@ -261,7 +262,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void getNearbyPlaces() {
-        //TODO: toggle loading section
+        toggleLoadingSection(true);
         PlacesApiHelper.getPlacesNearby(searchLocation, new NearbySearchResult());
     }
 
@@ -415,14 +416,22 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override public void onConnectionFailed(ConnectionResult connectionResult) { Log.v("test", "Connection Failed: " + connectionResult.toString()); }
 
     private void toggleGPSErrorSection(boolean shouldDisplay) {
+        animateTransition(errorSection, shouldDisplay);
+    }
+
+    private void toggleLoadingSection(boolean shouldDisplay) {
+        animateTransition(loadingSection, shouldDisplay);
+    }
+
+    private void animateTransition(View view, boolean shouldDisplay) {
         float alphaVal = (shouldDisplay) ? 1 : 0;
         int visibility = (shouldDisplay) ? View.VISIBLE : View.GONE;
 
-        errorSection.animate()
+        view.animate()
                 .setDuration(400)
                 .setInterpolator(new DecelerateInterpolator())
                 .alpha(alphaVal)
-                .setListener(new FadeAnimationListener(errorSection, visibility))
+                .setListener(new FadeAnimationListener(view, visibility))
                 .start();
     }
 
@@ -435,7 +444,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             }
 
             if (!moreResults) {
-                //TODO: Toggle loading section
+                toggleLoadingSection(false);
             }
         }
     }

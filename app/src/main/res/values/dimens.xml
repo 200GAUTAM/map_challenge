@@ -7,6 +7,7 @@
 
     <dimen name="content_padding">16dp</dimen>
     <dimen name="category_dropdown_margin">12dp</dimen>
+    <dimen name="loading_dialog_margin">20dp</dimen>
     <dimen name="card_corner_radius">4dp</dimen>
     <dimen name="category_list_width">240dp</dimen>
 </resources>
