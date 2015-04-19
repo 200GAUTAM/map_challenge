@@ -1,7 +1,7 @@
 package com.suresh.mapchallenge.api.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by suresh on 18/4/15.
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Place implements Serializable {
 
     public String id, name, photoId, address;
-    public ArrayList<String> types;
+    public HashSet<String> types;
     public double lat, lng;
     public Category category;
 

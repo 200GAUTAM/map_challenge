@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by suresh on 18/4/15.
@@ -40,11 +41,22 @@ public class NearbySearchParser extends BaseParser<JSONObject, ArrayList<Place>>
                 place.lng = locationObj.getDouble("lng");
 
                 //Parse types
-                ArrayList<String> types = new ArrayList<String>();
+                HashSet<String> types = new HashSet<String>();
                 place.types = types;
                 JSONArray typeArr = placeObj.getJSONArray("types");
                 for (int j = 0; j < typeArr.length(); j++) {
                     types.add(typeArr.getString(j));
+                }
+
+                //Determine category
+                category_search:
+                for (Place.Category c : Place.Category.values()) {
+                    for (String t : c.types) {
+                        if (place.types.contains(t)) {
+                            place.category = c;
+                            break category_search;
+                        }
+                    }
                 }
 
                 //Parse photo if available
