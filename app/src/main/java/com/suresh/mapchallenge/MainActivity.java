@@ -33,6 +33,7 @@ import com.suresh.mapchallenge.utils.CategoryAdapter;
 import com.suresh.mapchallenge.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -49,7 +50,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
-    private HashSet<Place> placeSet = new HashSet<Place>(); //Maintaining hashset of places to prevent duplicates
+    private HashSet<Place> placeSet; //Maintaining hashset of places to prevent duplicates
+    private CategoryAdapter adapter;
+
+    /*
+     * savedInstanceState bundle keys
+     */
+    private static final String KEY_PLACES = "place_set";
+    private static final String KEY_CATEGORY_SELECTION = "selected_categories";
 
     //View handles
     private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, loadingSection;
@@ -62,17 +70,31 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         initMap();
         initGooglePlayServices();
 
-        //Setting up the category dropdown
+        //Setting up the category dropdown and other view handles
         categoryDropdownToggle = findViewById(R.id.categoryDropdownToggle);
         categoryDropdownToggle.setOnClickListener(this);
         categoryDropdownToggle.addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
         categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
-        ListView lv = (ListView) findViewById(R.id.categoryList);
-        lv.setDividerHeight(0);
-        lv.setAdapter(new CategoryAdapter(this));
-
         touchInterceptor = findViewById(R.id.touchInterceptor);
         loadingSection = findViewById(R.id.loadingSection);
+
+        //Setting up the list of categories to display in the dropdown
+        ListView lv = (ListView) findViewById(R.id.categoryList);
+        lv.setDividerHeight(0);
+        if (savedInstanceState == null) {
+            adapter = new CategoryAdapter(this);
+        } else {
+            boolean[] checked = savedInstanceState.getBooleanArray(KEY_CATEGORY_SELECTION);
+            adapter = new CategoryAdapter(this, checked);
+        }
+        lv.setAdapter(adapter);
+
+        //Initialising/restoring the list of places
+        if (savedInstanceState == null) {
+            placeSet = new HashSet<Place>();
+        } else {
+            placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
+        }
     }
 
     private void initMap() {
@@ -230,10 +252,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
     }
 
-    private void plotPlaces(ArrayList<Place> places) {
+    private void plotPlaces(Collection<Place> places, boolean avoidDuplicates) {
         for (Place p : places) {
             //Skip existing places
-            if (placeSet.contains(p)) continue;
+            if (avoidDuplicates && placeSet.contains(p)) continue;
 
             MarkerOptions marker = new MarkerOptions();
 
@@ -246,7 +268,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
             Marker m = map.addMarker(marker);
             mpMap.put(m, p);
-            placeSet.add(p);
+            if (avoidDuplicates) placeSet.add(p);
         }
     }
 
@@ -255,6 +277,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         if (latestLocation == null) {
             //TODO: Handle error
+            return;
         }
 
         //Clear existing data
@@ -280,6 +303,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(KEY_PLACES, placeSet);
+        outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
+    }
+
     /*
      * Google Maps callbacks
      */
@@ -292,6 +323,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         tryInitialisingMap();
         trySettingMapPadding();
+
+        //Restore markers if available
+        if (placeSet.size() > 0) plotPlaces(placeSet, false);
     }
 
     @Override
@@ -329,7 +363,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         public void consumeResult(ArrayList<Place> result, boolean moreResults) {
             if (result != null) {
                 Log.v("test", result.toString());
-                plotPlaces(result);
+                plotPlaces(result, true);
             }
 
             if (!moreResults) {

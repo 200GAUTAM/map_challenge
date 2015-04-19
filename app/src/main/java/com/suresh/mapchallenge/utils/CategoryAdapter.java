@@ -24,13 +24,26 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
     private OnCategoryChangedListener listener;
 
     public CategoryAdapter(OnCategoryChangedListener listener) {
-        //Initialising the checked boolean array
-        checked = new boolean[categories.length];
-        for (int i = 0; i < checked.length; i++) {
-            checked[i] = true;
+        this(listener, null);
+    }
+
+    public CategoryAdapter(OnCategoryChangedListener listener, boolean[] checked) {
+        //Initialising the checked boolean array if required
+        if (checked == null) {
+            this.checked = new boolean[categories.length];
+            for (int i = 0; i < this.checked.length; i++) {
+                this.checked[i] = true;
+            }
+        } else {
+            this.checked = checked;
         }
 
+
         this.listener = listener;
+    }
+
+    public boolean[] getChecked() {
+        return checked;
     }
 
     @Override
