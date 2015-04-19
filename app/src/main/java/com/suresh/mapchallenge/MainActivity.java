@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
@@ -40,7 +41,8 @@ import java.util.Map;
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener,
-        View.OnClickListener, CategoryAdapter.OnCategoryChangedListener {
+        View.OnClickListener, CategoryAdapter.OnCategoryChangedListener,
+        View.OnTouchListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
@@ -94,6 +96,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
         touchInterceptor = findViewById(R.id.touchInterceptor);
         errorSection = findViewById(R.id.errorSection);
+        errorSection.setOnTouchListener(this);
         listView = (ListView) findViewById(R.id.categoryList);
         listView.setDividerHeight(0);
     }
@@ -154,6 +157,16 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             case R.id.touchInterceptor:
                 showHideDropdown();
                 break;
+        }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()) {
+            case R.id.errorSection:
+                return true; //Intercepting touch events to prevent the user from interacting with the views below
+            default:
+                return false;
         }
     }
 

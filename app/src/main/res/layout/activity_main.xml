@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- GOOGLE MAPS FRAGMENT -->
     <fragment
         android:id="@+id/mapFrag"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
+    <!-- DUMMY VIEW TO INTERCEPT TOUCH WHEN THE CATEGORY DROPDOWN IS OPEN -->
     <View
         android:id="@+id/touchInterceptor"
         android:layout_width="match_parent"
@@ -18,6 +20,7 @@
         android:visibility="gone"
         />
 
+    <!-- CATEGORY DROPDOWN SECTION -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,6 +72,7 @@
 
     </LinearLayout>
 
+    <!-- GPS ERROR SECTION -->
     <LinearLayout
         android:id="@+id/errorSection"
         android:layout_width="match_parent"
