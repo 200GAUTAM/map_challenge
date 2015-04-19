@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
 
@@ -20,7 +19,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -47,7 +45,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private Location latestLocation;
-    private boolean mapInitialised, paddingSet;
+    private boolean mapInitialised, paddingSet = false;
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
@@ -60,10 +58,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private static final String KEY_PLACES = "place_set";
     private static final String KEY_CATEGORY_SELECTION = "selected_categories";
     private static final String KEY_MAP_INITIALISED = "map_initialised";
-    private static final String KEY_PADDING_SET = "padding_set";
 
     //View handles
     private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, loadingSection;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,21 +78,11 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
         touchInterceptor = findViewById(R.id.touchInterceptor);
         loadingSection = findViewById(R.id.loadingSection);
+        listView = (ListView) findViewById(R.id.categoryList);
+        listView.setDividerHeight(0);
 
-        //Setting up the list of categories to display in the dropdown
-        ListView lv = (ListView) findViewById(R.id.categoryList);
-        lv.setDividerHeight(0);
-        if (savedInstanceState == null) {
-            adapter = new CategoryAdapter(this);
-        } else {
-            HashSet<Place.Category> checked = (HashSet<Place.Category>) savedInstanceState
-                    .getSerializable(KEY_CATEGORY_SELECTION);
-            adapter = new CategoryAdapter(this, checked);
-        }
-        lv.setAdapter(adapter);
-
-        //Restoring variables if the screen is rotated
-        restoreVariables(savedInstanceState);
+        //Initialising or restoring variables (if screen is rotated)
+        initOrRestoreVariables(savedInstanceState);
     }
 
     private void initMap() {
@@ -119,16 +107,24 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         trySettingMapPadding();
     }
 
-    private void restoreVariables(Bundle savedInstanceState) {
+    private void initOrRestoreVariables(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             placeSet = new HashSet<Place>();
             mapInitialised = false;
             paddingSet = false;
+            adapter = new CategoryAdapter(this);
         } else {
             placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
             mapInitialised = savedInstanceState.getBoolean(KEY_MAP_INITIALISED);
-            paddingSet = savedInstanceState.getBoolean(KEY_PADDING_SET);
+            paddingSet = false;
+
+            HashSet<Place.Category> checked = (HashSet<Place.Category>) savedInstanceState
+                    .getSerializable(KEY_CATEGORY_SELECTION);
+            Log.v("test", "Checked: " + checked);
+            adapter = new CategoryAdapter(this, checked);
         }
+
+        listView.setAdapter(adapter);
     }
 
     @Override
@@ -319,19 +315,16 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.v("test", "onSaveInstanceState() called");
 
         outState.putSerializable(KEY_PLACES, placeSet);
         outState.putSerializable(KEY_CATEGORY_SELECTION, adapter.getChecked());
         outState.putBoolean(KEY_MAP_INITIALISED, mapInitialised);
-        outState.putBoolean(KEY_PADDING_SET, paddingSet);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
-        Log.v("test", "onRestoreInstanceState() called");
+        initOrRestoreVariables(savedInstanceState);
     }
 
     /*
@@ -348,6 +341,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         trySettingMapPadding();
 
         //Restore markers if available
+        Log.v("test", "Restoring markers");
         if (placeSet.size() > 0) plotPlaces(placeSet, false);
     }
 
