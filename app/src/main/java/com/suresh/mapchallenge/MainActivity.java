@@ -198,7 +198,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private void getNearbyPlaces(Location location) {
         loadingSection.setOnClickListener(this);
         loadingSection.animate()
-                .setDuration(FADE_ANIM_DURATION)
+                .setDuration(400)
                 .setInterpolator(new DecelerateInterpolator())
                 .alpha(1)
                 .setListener(new FadeAnimationListener(loadingSection, View.VISIBLE))
@@ -296,7 +296,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             if (!moreResults) {
                 loadingSection.setOnClickListener(null);
                 loadingSection.animate()
-                        .setDuration(FADE_ANIM_DURATION)
+                        .setDuration(400)
                         .setInterpolator(new DecelerateInterpolator())
                         .alpha(0)
                         .setListener(new FadeAnimationListener(loadingSection, View.GONE))
