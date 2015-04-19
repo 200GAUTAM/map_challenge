@@ -35,4 +35,14 @@ public class Place implements Serializable {
         if (photoId != null) output += ", Photo ID: " + photoId;
         return output;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return id.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
