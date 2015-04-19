@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_action_search_again:
+            case R.id.menu_action_refresh:
                 restartSearch();
                 break;
             default:
