@@ -68,6 +68,7 @@ public class NearbySearchParser extends BaseParser<JSONObject, ArrayList<Place>>
 
             //Check if there are more results. Make the request if available
             if (json.has("next_page_token")) {
+                moreResults = true;
                 String nextPageToken = json.getString("next_page_token");
                 PlacesApiHelper.getPlacesNearby(nextPageToken, resultListener);
             }

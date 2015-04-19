@@ -1,13 +1,13 @@
 package com.suresh.mapchallenge;
 
 import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
 
@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -50,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private HashSet<Place> placeSet = new HashSet<Place>(); //Maintaining hashset of places to prevent duplicates
 
     //View handles
-    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor;
+    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, loadingSection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +64,12 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         categoryDropdownToggle.setOnClickListener(this);
         categoryDropdownToggle.addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
         categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
-        touchInterceptor = findViewById(R.id.touchInterceptor);
         ListView lv = (ListView) findViewById(R.id.categoryList);
         lv.setDividerHeight(0);
         lv.setAdapter(new CategoryAdapter(this));
+
+        touchInterceptor = findViewById(R.id.touchInterceptor);
+        loadingSection = findViewById(R.id.loadingSection);
     }
 
     private void initMap() {
@@ -99,7 +100,12 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
      */
     @Override
     public void onClick(View v) {
-        showHideDropdown();
+        switch (v.getId()) {
+            case R.id.categoryDropdownToggle:
+            case R.id.touchInterceptor:
+                showHideDropdown();
+                break;
+        }
     }
 
     private void showHideDropdown() {
@@ -190,6 +196,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void getNearbyPlaces(Location location) {
+        loadingSection.setVisibility(View.VISIBLE);
+        loadingSection.setOnClickListener(this);
         PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
     }
 
@@ -273,10 +281,15 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     private class NearbySearchResult implements BaseParser.ResultListener<ArrayList<Place>> {
         @Override
-        public void consumeResult(ArrayList<Place> result) {
+        public void consumeResult(ArrayList<Place> result, boolean moreResults) {
             if (result != null) {
                 Log.v("test", result.toString());
                 plotPlaces(result);
+            }
+
+            if (!moreResults) {
+                loadingSection.setVisibility(View.GONE);
+                loadingSection.setOnClickListener(null);
             }
         }
     }
