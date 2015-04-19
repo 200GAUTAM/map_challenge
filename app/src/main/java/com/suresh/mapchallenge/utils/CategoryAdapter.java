@@ -1,5 +1,7 @@
 package com.suresh.mapchallenge.utils;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +44,7 @@ public class CategoryAdapter extends BaseAdapter {
             view = convertView;
             holder = (ViewHolder) view.getTag();
         } else {
-            view = LayoutInflater.from(convertView.getContext()).inflate(R.layout.row_category, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_category, parent, false);
             holder = new ViewHolder();
             view.setTag(holder);
 
@@ -51,7 +53,14 @@ public class CategoryAdapter extends BaseAdapter {
             holder.tvCategoryName = (TextView) view.findViewById(R.id.tvCategoryName);
         }
 
-        //TODO: Bind view
+        //Setting the checkbox state
+        holder.checkBox.setChecked(checked[position]);
+
+        //Setting the swatch color based on the marker hue
+        int swatchColor = Color.HSVToColor(new float[]{ categories[position].hue, 100, 100 });
+        holder.categoryColorSwatch.setBackgroundColor(swatchColor);
+
+        holder.tvCategoryName.setText(categories[position].displayName);
 
         return view;
     }

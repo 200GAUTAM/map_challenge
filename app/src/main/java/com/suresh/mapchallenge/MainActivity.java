@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.parser.BaseParser;
+import com.suresh.mapchallenge.utils.CategoryAdapter;
 import com.suresh.mapchallenge.utils.Constants;
 
 import java.util.ArrayList;
@@ -49,7 +51,11 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         initMap();
         initGooglePlayServices();
 
-        findViewById(R.id.categoryDropdown).addOnLayoutChangeListener(this);
+        //Setting up the category dropdown
+        findViewById(R.id.categoryDropdown).addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
+        CategoryAdapter adapter = new CategoryAdapter();
+        ListView lv = (ListView) findViewById(R.id.categoryList);
+        lv.setAdapter(adapter);
     }
 
     @Override
