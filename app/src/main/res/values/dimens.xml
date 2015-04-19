@@ -6,4 +6,5 @@
     <dimen name="dummy_view_height">144dp</dimen>
 
     <dimen name="content_padding">16dp</dimen>
+    <dimen name="category_dropdown_margin">16dp</dimen>
 </resources>

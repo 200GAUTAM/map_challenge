@@ -9,23 +9,26 @@
         android:id="@+id/mapFrag"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/categoryDropdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        app:cardCornerRadius="4dp"
-        app:contentPadding="4dp">
+        android:layout_marginTop="@dimen/category_dropdown_margin"
+        android:layout_marginRight="@dimen/category_dropdown_margin"
+        app:cardCornerRadius="4dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_categories"
             android:gravity="center_vertical"
-            android:paddingLeft="4dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="4dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="4dp"
             android:drawableRight="@drawable/ic_drop_down"/>
 
     </android.support.v7.widget.CardView>

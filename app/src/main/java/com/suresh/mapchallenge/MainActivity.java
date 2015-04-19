@@ -5,6 +5,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -29,12 +30,13 @@ import java.util.HashSet;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnInfoWindowClickListener {
+        GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private Location latestLocation;
     private boolean mapInitialised = false;
+    private int mapTopPadding; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
     private HashSet<Place> placeSet = new HashSet<Place>(); //Maintaining hashset of places to prevent duplicates
@@ -46,6 +48,17 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         getSupportActionBar().setTitle(R.string.map_screen_actionbar_title);
         initMap();
         initGooglePlayServices();
+
+        findViewById(R.id.categoryDropdown).addOnLayoutChangeListener(this);
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        v.removeOnLayoutChangeListener(this);
+
+        int margin = (int) getResources().getDimension(R.dimen.category_dropdown_margin);
+        mapTopPadding = (bottom - top) + margin;
+        map.setPadding(0, mapTopPadding, 0, 0);
     }
 
     private void initMap() {
