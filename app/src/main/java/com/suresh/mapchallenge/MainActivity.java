@@ -32,7 +32,8 @@ import java.util.HashSet;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener {
+        GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener,
+        View.OnClickListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
@@ -43,6 +44,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
     private HashSet<Place> placeSet = new HashSet<Place>(); //Maintaining hashset of places to prevent duplicates
 
+    //View handles
+    private View categoryDropdownToggle, categoryDropdownSection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,10 +56,13 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         initGooglePlayServices();
 
         //Setting up the category dropdown
-        findViewById(R.id.categoryDropdown).addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
-        CategoryAdapter adapter = new CategoryAdapter();
+        categoryDropdownToggle = findViewById(R.id.categoryDropdownToggle);
+        categoryDropdownToggle.setOnClickListener(this);
+        categoryDropdownToggle.addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
+        categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
         ListView lv = (ListView) findViewById(R.id.categoryList);
-        lv.setAdapter(adapter);
+        lv.setDividerHeight(0);
+        lv.setAdapter(new CategoryAdapter());
     }
 
     @Override
@@ -65,6 +72,18 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         int margin = (int) getResources().getDimension(R.dimen.category_dropdown_margin);
         mapTopPadding = (bottom - top) + margin;
         map.setPadding(0, mapTopPadding, 0, 0);
+    }
+
+    @Override
+    public void onClick(View v) {
+        showHideDropdown();
+    }
+
+    private void showHideDropdown() {
+        int vis = (categoryDropdownSection.getVisibility() == View.GONE)
+                ? View.VISIBLE
+                : View.GONE;
+        categoryDropdownSection.setVisibility(vis);
     }
 
     private void initMap() {

@@ -57,7 +57,7 @@ public class CategoryAdapter extends BaseAdapter {
         holder.checkBox.setChecked(checked[position]);
 
         //Setting the swatch color based on the marker hue
-        int swatchColor = Color.HSVToColor(new float[]{ categories[position].hue, 100, 100 });
+        int swatchColor = Color.HSVToColor(new float[]{ categories[position].hue, 95, 90 });
         holder.categoryColorSwatch.setBackgroundColor(swatchColor);
 
         holder.tvCategoryName.setText(categories[position].displayName);
