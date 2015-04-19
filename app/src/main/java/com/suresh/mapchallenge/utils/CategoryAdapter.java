@@ -2,6 +2,7 @@ package com.suresh.mapchallenge.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,16 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
 
     private Place.Category[] categories = Place.Category.values();
     private boolean[] checked;
+    private OnCategoryChangedListener listener;
 
-    public CategoryAdapter() {
+    public CategoryAdapter(OnCategoryChangedListener listener) {
+        //Initialising the checked boolean array
         checked = new boolean[categories.length];
-
         for (int i = 0; i < checked.length; i++) {
             checked[i] = true;
         }
+
+        this.listener = listener;
     }
 
     @Override
@@ -68,8 +72,10 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
         Place.Category c = categories[position];
         holder.position = position;
 
-        //Setting the checkbox state
-        holder.checkBox.setChecked(checked[position]);
+        //Setting the checkbox state if required
+        if (holder.checkBox.isChecked() != checked[position]) {
+            holder.checkBox.setChecked(checked[position]);
+        }
 
         //Setting the swatch color based on the marker hue
         int swatchColor = Color.HSVToColor(new float[]{ c.hue, 95, 85 });
@@ -91,6 +97,8 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
         boolean newState = !checked[holder.position];
         holder.checkBox.setChecked(newState);
         checked[holder.position] = newState;
+
+        if (listener != null) listener.onCategoryOptionChanged(categories[holder.position], newState);
     }
 
     /**
@@ -100,10 +108,12 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
      */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        Log.v("test", "onCheckedChanged() called");
         View parent = (View) buttonView.getParent();
         ViewHolder holder = (ViewHolder) parent.getTag();
 
         checked[holder.position] = isChecked;
+        if (listener != null) listener.onCategoryOptionChanged(categories[holder.position], isChecked);
     }
 
     private static class ViewHolder {
@@ -111,5 +121,9 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
         View categoryColorSwatch;
         TextView tvCategoryName;
         int position;
+    }
+
+    public static interface OnCategoryChangedListener {
+        public void onCategoryOptionChanged(Place.Category category, boolean chosen);
     }
 }

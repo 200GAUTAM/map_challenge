@@ -29,11 +29,13 @@ import com.suresh.mapchallenge.utils.Constants;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends ActionBarActivity implements Constants, OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener,
-        View.OnClickListener {
+        View.OnClickListener, CategoryAdapter.OnCategoryChangedListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
@@ -63,7 +65,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         touchInterceptor = findViewById(R.id.touchInterceptor);
         ListView lv = (ListView) findViewById(R.id.categoryList);
         lv.setDividerHeight(0);
-        lv.setAdapter(new CategoryAdapter());
+        lv.setAdapter(new CategoryAdapter(this));
     }
 
     private void initMap() {
@@ -169,6 +171,20 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             Marker m = map.addMarker(marker);
             mpMap.put(m, p);
             placeSet.add(p);
+        }
+    }
+
+    /**
+     * Controls the showing and hiding of markers based on the options chosen by the user
+     * @param category
+     * @param chosen
+     */
+    @Override
+    public void onCategoryOptionChanged(Place.Category category, boolean chosen) {
+        for (Map.Entry<Marker, Place> e : mpMap.entrySet()) {
+            if (e.getValue().category == category) {
+                e.getKey().setVisible(chosen);
+            }
         }
     }
 
