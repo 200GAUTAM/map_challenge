@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private Location latestLocation;
-    private boolean mapLocationInitialised = false;
+    private boolean mapInitialised = false;
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
     private HashSet<Place> placeSet = new HashSet<Place>(); //Maintaining hashset of places to prevent duplicates
@@ -73,16 +73,19 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         googleApiClient.disconnect();
     }
 
-    private void tryInitialisingMapLocation() {
-        if (mapLocationInitialised) return; //Map location has already been initialised
+    private void tryInitialisingMap() {
+        if (mapInitialised) return; //Map location has already been initialised
 
         if (map == null || latestLocation == null) return; //We don't have all info yet
 
-        mapLocationInitialised = true;
+        mapInitialised = true;
 
         LatLng latLng = new LatLng(latestLocation.getLatitude(), latestLocation.getLongitude());
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
+
+        //Trigger API call to get nearby places
+        getNearbyPlaces(latestLocation);
     }
 
     private void getNearbyPlaces(Location location) {
@@ -119,7 +122,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.setMyLocationEnabled(true);
         map.setOnInfoWindowClickListener(this);
 
-        tryInitialisingMapLocation();
+        tryInitialisingMap();
     }
 
     @Override
@@ -141,8 +144,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         if (latestLocation != null) {
             Log.v("test", "Location = " + latestLocation.getLatitude() + "," + latestLocation.getLongitude());
-            tryInitialisingMapLocation();
-            getNearbyPlaces(latestLocation);
+            tryInitialisingMap();
         } else {
             //TODO: Display error message
             Log.v("test", "Location is null!");
