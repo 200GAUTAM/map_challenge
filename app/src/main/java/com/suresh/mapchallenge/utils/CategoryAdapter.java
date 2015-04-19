@@ -108,7 +108,6 @@ public class CategoryAdapter extends BaseAdapter implements View.OnClickListener
      */
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.v("test", "onCheckedChanged() called");
         View parent = (View) buttonView.getParent();
         ViewHolder holder = (ViewHolder) parent.getTag();
 

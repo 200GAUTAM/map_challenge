@@ -1,5 +1,6 @@
 package com.suresh.mapchallenge;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -100,17 +101,52 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void showHideDropdown() {
-        int vis = (categoryDropdownSection.getVisibility() == View.GONE)
-                ? View.VISIBLE
-                : View.GONE;
-        categoryDropdownSection.setVisibility(vis);
-        touchInterceptor.setVisibility(vis);
+        int vis;
+        View.OnClickListener listener;
+        float alphaVal;
 
-        if (vis == View.VISIBLE) {
-            touchInterceptor.setOnClickListener(this);
+        if (categoryDropdownSection.isShown()) {
+            vis = View.GONE;
+            listener = null;
+            alphaVal = 0;
         } else {
-            touchInterceptor.setOnClickListener(null);
+            vis = View.VISIBLE;
+            listener = this;
+            alphaVal = 1;
         }
+
+        touchInterceptor.setVisibility(vis);
+        touchInterceptor.setOnClickListener(listener);
+
+        categoryDropdownSection.animate()
+                .setDuration(FADE_ANIM_DURATION)
+                .alpha(alphaVal)
+                .setListener(new FadeAnimationListener(categoryDropdownSection, vis))
+                .start();
+    }
+
+    private static class FadeAnimationListener implements Animator.AnimatorListener {
+
+        private View view;
+        private int visibilityAfterAnim;
+
+        private FadeAnimationListener(View view, int visibility) {
+            this.view = view;
+            visibilityAfterAnim = visibility;
+        }
+
+        @Override
+        public void onAnimationStart(Animator animation) {
+            if (visibilityAfterAnim == View.VISIBLE) view.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            if (visibilityAfterAnim == View.GONE) view.setVisibility(View.GONE);
+        }
+
+        @Override public void onAnimationCancel(Animator animation) { }
+        @Override public void onAnimationRepeat(Animator animation) { }
     }
 
     @Override
