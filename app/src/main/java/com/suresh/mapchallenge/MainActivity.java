@@ -292,6 +292,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         placeSet.clear();
         map.clear();
 
+        //Redraw the search location marker
+        drawSearchLocationMarker();
+
         //Trigger search API call again
         getNearbyPlaces();
     }
