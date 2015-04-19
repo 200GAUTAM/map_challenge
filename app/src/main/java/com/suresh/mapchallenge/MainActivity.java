@@ -260,9 +260,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.setPadding(0, mapTopPadding, 0, 0);
     }
 
-    private void getNearbyPlaces(LatLng location) {
+    private void getNearbyPlaces() {
         //TODO: toggle loading section
-        PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
+        PlacesApiHelper.getPlacesNearby(searchLocation, new NearbySearchResult());
     }
 
     private void plotPlaces(Collection<Place> places, boolean avoidDuplicates) {
@@ -293,7 +293,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.clear();
 
         //Trigger search API call again
-        getNearbyPlaces(searchLocation);
+        getNearbyPlaces();
     }
 
     /**
@@ -333,6 +333,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
+        map.setOnMarkerDragListener(new MarkerDragListener());
         map.setOnInfoWindowClickListener(this);
 
         trySettingMapPadding();
@@ -359,7 +360,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         @Override
         public void onMarkerDragEnd(Marker marker) {
-
+            searchLocation = marker.getPosition();
+            getNearbyPlaces();
         }
     }
 
@@ -384,7 +386,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             //Initialise screen
             searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             setCameraToCurrentUserLocation(); //Initialise the map to the user's current location
-            getNearbyPlaces(searchLocation); //Trigger the API call to get nearby places
+            getNearbyPlaces(); //Trigger the API call to get nearby places
 
         } else { //Location/GPS not enabled on device. Display error
             toggleGPSErrorSection(true);
