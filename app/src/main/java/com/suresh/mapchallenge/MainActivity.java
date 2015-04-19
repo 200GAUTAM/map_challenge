@@ -119,7 +119,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             paddingSet = false;
 
             boolean[] checked = savedInstanceState.getBooleanArray(KEY_CATEGORY_SELECTION);
-            Log.v("test", "Checked: " + checked);
             adapter = new CategoryAdapter(this, checked);
         }
 
@@ -336,11 +335,11 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.setMyLocationEnabled(true);
         map.setOnInfoWindowClickListener(this);
 
+        Log.v("test", "Calling from onMapReady()");
         tryInitialisingMap();
         trySettingMapPadding();
 
         //Restore markers if available
-        Log.v("test", "Restoring markers");
         if (placeSet.size() > 0) plotPlaces(placeSet, false);
     }
 
@@ -357,12 +356,16 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
      * Google Play Services callbacks (Location API stuff)
      */
 
+    /**
+     * Starting point of the app. We can start getting location data once this callback is triggered.
+     * @param bundle
+     */
     @Override
     public void onConnected(Bundle bundle) {
         latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (latestLocation != null) {
-            Log.v("test", "Location = " + latestLocation.getLatitude() + "," + latestLocation.getLongitude());
+            Log.v("test", "Calling from onConnected()");
             tryInitialisingMap();
         } else {
             //TODO: Display error message
