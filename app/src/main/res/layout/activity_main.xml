@@ -70,29 +70,39 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/loadingSection"
+        android:id="@+id/errorSection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/loading_section_bg"
-        android:visibility="gone"
-        android:alpha="0"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@color/loading_section_bg">
 
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:id="@+id/progressBar"/>
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/ic_gps_off"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/default_text_color"
+            android:padding="16dp"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:text="@string/loading_message"/>
+            android:gravity="center"
+            android:text="@string/gps_error"/>
+
+        <TextView
+            android:id="@+id/btnLocationSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/settings_btn_bg"
+            android:textColor="#ffffffff"
+            android:padding="12dp"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/location_settings"/>
 
     </LinearLayout>
 

@@ -3,4 +3,5 @@
     <color name="banner_img_bg">#ffb0b0b0</color>
     <color name="default_text_color">#464646</color>
     <color name="loading_section_bg">#c8ffffff</color>
+    <color name="settings_btn_bg">#ff2f2f2f</color>
 </resources>

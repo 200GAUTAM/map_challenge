@@ -60,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private static final String KEY_MAP_INITIALISED = "map_initialised";
 
     //View handles
-    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, loadingSection;
+    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, errorSection;
     private ListView listView;
 
     @Override
@@ -93,7 +93,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         categoryDropdownToggle.addOnLayoutChangeListener(this); //Used to calculate the amount of padding for the map controls
         categoryDropdownSection = findViewById(R.id.categoryDropdownSection);
         touchInterceptor = findViewById(R.id.touchInterceptor);
-        loadingSection = findViewById(R.id.loadingSection);
+        errorSection = findViewById(R.id.errorSection);
         listView = (ListView) findViewById(R.id.categoryList);
         listView.setDividerHeight(0);
     }
@@ -236,14 +236,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void getNearbyPlaces(Location location) {
-        loadingSection.setOnClickListener(this);
-        loadingSection.animate()
-                .setDuration(400)
-                .setInterpolator(new DecelerateInterpolator())
-                .alpha(1)
-                .setListener(new FadeAnimationListener(loadingSection, View.VISIBLE))
-                .start();
-
+        //TODO: toggle loading section
         PlacesApiHelper.getPlacesNearby(location, new NearbySearchResult());
     }
 
@@ -351,19 +344,33 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         latestLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (latestLocation != null) {
+            toggleGPSErrorSection(false);
             setCameraToCurrentUserLocation();
 
             //Trigger API call if there is no existing data
             if (placeSet.isEmpty()) getNearbyPlaces(latestLocation);
-        } else {
-            //TODO: Display error message
-            Log.v("test", "Location is null!");
+        } else { //Location/GPS not enabled on device. Display error
+            toggleGPSErrorSection(true);
         }
     }
 
     @Override public void onConnectionSuspended(int i) { Log.v("test", "Connection suspended: " + i); }
 
     @Override public void onConnectionFailed(ConnectionResult connectionResult) { Log.v("test", "Connection Failed: " + connectionResult.toString()); }
+
+    private void toggleGPSErrorSection(boolean shouldDisplay) {
+        if (errorSection.isShown() == shouldDisplay) return; //State is already toggled. No need to change anything
+
+        float alphaVal = (shouldDisplay) ? 1 : 0;
+        int visibility = (shouldDisplay) ? View.VISIBLE : View.GONE;
+
+        errorSection.animate()
+                .setDuration(400)
+                .setInterpolator(new DecelerateInterpolator())
+                .alpha(alphaVal)
+                .setListener(new FadeAnimationListener(errorSection, visibility))
+                .start();
+    }
 
     private class NearbySearchResult implements BaseParser.ResultListener<ArrayList<Place>> {
         @Override
@@ -374,13 +381,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             }
 
             if (!moreResults) {
-                loadingSection.setOnClickListener(null);
-                loadingSection.animate()
-                        .setDuration(400)
-                        .setInterpolator(new DecelerateInterpolator())
-                        .alpha(0)
-                        .setListener(new FadeAnimationListener(loadingSection, View.GONE))
-                        .start();
+                //TODO: Toggle loading section
             }
         }
     }

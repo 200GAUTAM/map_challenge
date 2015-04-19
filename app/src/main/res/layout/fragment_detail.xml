@@ -68,6 +68,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/ab_height"
         android:background="@android:color/transparent"
-        app:navigationIcon="@drawable/abc_ic_ab_back_mtrl_am_alpha"/>
+        app:navigationIcon="@drawable/ic_arrow_back_white"/>
 
 </RelativeLayout>
