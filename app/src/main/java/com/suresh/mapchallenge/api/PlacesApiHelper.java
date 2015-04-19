@@ -85,4 +85,12 @@ public class PlacesApiHelper implements Constants {
         builder.appendQueryParameter("types", typesParamStr.toString());
     }
 
+    public static String getPhotoUrl(String photoReference) {
+        Uri.Builder builder = Uri.parse(API_IMAGE_BASE_URL).buildUpon();
+        addApiKeyParam(builder);
+        builder.appendQueryParameter("photoreference", photoReference);
+        builder.appendQueryParameter("maxwidth", MAX_IMAGE_WIDTH);
+        return builder.build().toString();
+    }
+
 }

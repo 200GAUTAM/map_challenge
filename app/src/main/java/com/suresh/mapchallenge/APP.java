@@ -1,10 +1,12 @@
 package com.suresh.mapchallenge;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 /**
@@ -14,6 +16,7 @@ public class APP extends Application {
 
     private static APP instance;
     private RequestQueue requestQueue;
+    private ImageLoader bannerImageLoader;
     private Handler delayHandler; //Handler to post delayed requests
 
     @Override
@@ -22,7 +25,20 @@ public class APP extends Application {
         instance = this;
 
         delayHandler = new Handler();
+
+        //Initialise Volley stuff
         requestQueue = Volley.newRequestQueue(this);
+        bannerImageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
+            @Override
+            public Bitmap getBitmap(String url) {
+                 return null;
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+                //Do nothing. Don't want to cache banner images
+            }
+        });
     }
 
     public static APP getInstance() {
@@ -40,5 +56,9 @@ public class APP extends Application {
                 requestQueue.add(request);
             }
         }, millis);
+    }
+
+    public ImageLoader getBannerImageLoader() {
+        return bannerImageLoader;
     }
 }

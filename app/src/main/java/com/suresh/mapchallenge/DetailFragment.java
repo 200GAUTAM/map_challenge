@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
 
 /**
@@ -63,6 +64,10 @@ public class DetailFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        if (place.photoId != null) {
+            imgBanner.setImageUrl(PlacesApiHelper.getPhotoUrl(place.photoId),
+                    APP.getInstance().getBannerImageLoader());
+        }
         tvTitle.setText(place.name);
         tvAddress.setText(place.address);
     }
