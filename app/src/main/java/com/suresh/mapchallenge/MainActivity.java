@@ -1,7 +1,6 @@
 package com.suresh.mapchallenge;
 
 import android.animation.Animator;
-import android.app.Application;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
@@ -221,7 +220,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void setCameraToCurrentUserLocation() {
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(searchLocation, MAP_ZOOM_LEVEL);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(searchLocation, START_ZOOM_LEVEL);
         map.moveCamera(update);
     }
 
