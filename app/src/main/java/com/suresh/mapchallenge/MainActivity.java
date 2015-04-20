@@ -47,12 +47,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener,
         View.OnClickListener, CategoryAdapter.OnCategoryChangedListener,
         View.OnTouchListener, GoogleMap.OnCameraChangeListener,
-        GoogleMap.OnMyLocationButtonClickListener, MarkerCache.MarkerEvictedListener {
+        GoogleMap.OnMyLocationButtonClickListener, MarkerCache.MarkerEvictedListener,
+        GoogleMap.OnMarkerClickListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private LatLng searchLocation;
     private boolean paddingSet = false, centreMarked = false;
+    private boolean ignoreCameraChange = false; //Flag to decide if we should ignore the camera movement (happens when a user clicks on a marker. Don't want to trigger an API call then)
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private MarkerCache markerCache = new MarkerCache(MAX_MARKER_COUNT, this); //Storing markers and their corresponding places
@@ -323,6 +325,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         map.setOnCameraChangeListener(this);
         map.setOnMyLocationButtonClickListener(this);
         map.setOnInfoWindowClickListener(this);
+        map.setOnMarkerClickListener(this);
 
         trySettingMapPadding();
 
@@ -340,7 +343,18 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     @Override
+    public boolean onMarkerClick(Marker marker) {
+        ignoreCameraChange = true;
+        return false;
+    }
+
+    @Override
     public void onCameraChange(CameraPosition cameraPosition) {
+        if (ignoreCameraChange) { //Ignoring camera change if the camera change was triggered by clicking on a marker. Can limit number of requests then.
+            ignoreCameraChange = false;
+            return;
+        }
+
         if (cameraPosition.zoom >= SEARCH_MIN_ZOOM && cameraPosition.zoom <= SEARCH_MAX_ZOOM) { //Within range
             if (zoomError.isShown()) toggleZoomError(false); //Hide the zoom warning if displayed
 
