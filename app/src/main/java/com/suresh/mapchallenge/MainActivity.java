@@ -237,7 +237,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     private void setCameraToCurrentUserLocation() {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(searchLocation, MAP_ZOOM_LEVEL);
-        map.animateCamera(update, 1, null);
+        map.moveCamera(update);
     }
 
     private void trySettingMapPadding() {
