@@ -279,8 +279,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     @Override
     public void onMarkerEvictedFromCache(Marker m, Place p) {
-        m.remove();
-        placeSet.remove(p);
+        m.remove(); //Remove the marker from the map
+        placeSet.remove(p); //Remove the corresponding place from the set
     }
 
     /**

@@ -18,7 +18,7 @@ public interface Constants {
     public static final long API_NEARBY_SEARCH_REQUEST_DELAY = 2000;
 
     //Maximum number of markers to display on the map. Used by the LruCache to evict the oldest markers.
-    public static final int MAX_MARKER_COUNT = 100;
+    public static final int MAX_MARKER_COUNT = 150;
 
     /*
      * API URLs
