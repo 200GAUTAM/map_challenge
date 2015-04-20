@@ -341,7 +341,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        Log.v("zoom", "" + cameraPosition.zoom);
         if (cameraPosition.zoom >= SEARCH_MIN_ZOOM && cameraPosition.zoom <= SEARCH_MAX_ZOOM) { //Within range
             if (zoomError.isShown()) toggleZoomError(false); //Hide the zoom warning if displayed
 
@@ -439,7 +438,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         @Override
         public void consumeResult(ArrayList<Place> result, boolean moreResults) {
             if (result != null) {
-                Log.v("test", result.toString());
                 plotPlaces(result, true);
             }
 
