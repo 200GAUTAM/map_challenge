@@ -5,7 +5,7 @@ package com.suresh.mapchallenge.utils;
  */
 public interface Constants {
 
-    public static final String PLACES_API_KEY = "AIzaSyARCSobh0ubndXEYN_Op7oaaR6PIMDNVyQ";
+    public static final String PLACES_API_KEY = "AIzaSyBFIKu0oTHsmV4sfL1uKvXsWAuTj4MCRLg";
 
     /*
      * Default values
