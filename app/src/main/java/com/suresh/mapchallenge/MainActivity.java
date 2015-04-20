@@ -65,7 +65,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private static final String KEY_SEARCH_LOCATION_MARKER = "search_location_marker";
 
     //View handles
-    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor, errorSection, loadingSection;
+    private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor,
+            errorSection, loadingSection, zoomError;
     private ListView listView;
 
     @Override
@@ -100,6 +101,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         touchInterceptor = findViewById(R.id.touchInterceptor);
         errorSection = findViewById(R.id.errorSection);
         loadingSection = findViewById(R.id.loadingSection);
+        zoomError = findViewById(R.id.zoomError);
         errorSection.setOnTouchListener(this);
         listView = (ListView) findViewById(R.id.categoryList);
         listView.setDividerHeight(0);
@@ -349,8 +351,18 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        searchLocation = cameraPosition.target;
-        getNearbyPlaces();
+        Log.v("zoom", "" + cameraPosition.zoom);
+        if (cameraPosition.zoom >= SEARCH_MIN_ZOOM) {
+            if (zoomError.isShown()) toggleZoomError(false); //Hide the zoom warning if displayed
+
+            if (cameraPosition.zoom < SEARCH_MAX_ZOOM) { //Within range. Trigger call to search for places
+                searchLocation = cameraPosition.target;
+                getNearbyPlaces();
+            }
+        } else { //Too far out. Display warning
+            toggleZoomError(true);
+        }
+
 
         if (!centreMarked) {
             centreMarked = true;
@@ -406,6 +418,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     private void toggleGPSErrorSection(boolean shouldDisplay) {
         animateTransition(errorSection, 600, shouldDisplay);
+    }
+
+    private void toggleZoomError(boolean shouldDisplay) {
+        animateTransition(zoomError, 300, shouldDisplay);
     }
 
     private void toggleLoadingSection(boolean shouldDisplay) {

@@ -72,6 +72,30 @@
 
     </LinearLayout>
 
+    <!-- ZOOM ERROR -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/zoomError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/zoom_error_margin"
+        android:visibility="gone"
+        android:alpha="0"
+        app:cardCornerRadius="@dimen/card_corner_radius"
+        app:cardUseCompatPadding="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/zoom_error"
+            android:textColor="#ff9a2700"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="center_vertical"/>
+
+    </android.support.v7.widget.CardView>
+
     <!-- LOADING DIALOG SECTION -->
     <android.support.v7.widget.CardView
         android:id="@+id/loadingSection"
