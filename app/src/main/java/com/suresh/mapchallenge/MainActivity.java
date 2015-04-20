@@ -181,29 +181,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void showHideDropdown() {
-        int vis;
-        View.OnClickListener listener;
-        float alphaVal;
-
-        if (categoryDropdownSection.isShown()) {
-            vis = View.GONE;
-            listener = null;
-            alphaVal = 0;
-        } else {
-            vis = View.VISIBLE;
-            listener = this;
-            alphaVal = 1;
-        }
-
-        touchInterceptor.setVisibility(vis);
-        touchInterceptor.setOnClickListener(listener);
-
-        categoryDropdownSection.animate()
-                .setDuration(FADE_ANIM_DURATION)
-                .setInterpolator(new DecelerateInterpolator())
-                .alpha(alphaVal)
-                .setListener(new FadeAnimationListener(categoryDropdownSection, vis))
-                .start();
+        animateTransition(categoryDropdownSection, 200, !categoryDropdownSection.isShown());
     }
 
     private static class FadeAnimationListener implements Animator.AnimatorListener {
