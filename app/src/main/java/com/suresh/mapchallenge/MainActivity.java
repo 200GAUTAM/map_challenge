@@ -34,6 +34,7 @@ import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.parser.BaseParser;
 import com.suresh.mapchallenge.utils.CategoryAdapter;
 import com.suresh.mapchallenge.utils.Constants;
+import com.suresh.mapchallenge.utils.MarkerCache;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +46,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener,
         View.OnClickListener, CategoryAdapter.OnCategoryChangedListener,
-        View.OnTouchListener, GoogleMap.OnCameraChangeListener, GoogleMap.OnMyLocationButtonClickListener {
+        View.OnTouchListener, GoogleMap.OnCameraChangeListener,
+        GoogleMap.OnMyLocationButtonClickListener, MarkerCache.MarkerEvictedListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
@@ -53,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private boolean paddingSet = false, centreMarked = false;
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
-    private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
+    private MarkerCache markerCache = new MarkerCache(MAX_MARKER_COUNT, this); //Storing markers and their corresponding places
     private HashSet<Place> placeSet; //Maintaining hashset of places to prevent duplicates
     private CategoryAdapter adapter;
 
@@ -258,19 +260,27 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             marker.icon(BitmapDescriptorFactory.defaultMarker(p.category.hue));
 
             Marker m = map.addMarker(marker);
-            mpMap.put(m, p);
+            markerCache.put(m, p);
             if (avoidDuplicates) placeSet.add(p);
         }
     }
 
     private void restartSearch() {
         //Clear existing data
-        mpMap.clear();
+        markerCache.setListener(null);
+        markerCache.evictAll();
+        markerCache.setListener(this);
         placeSet.clear();
         map.clear();
 
         //Trigger search API call again
         getNearbyPlaces();
+    }
+
+    @Override
+    public void onMarkerEvictedFromCache(Marker m, Place p) {
+        m.remove();
+        placeSet.remove(p);
     }
 
     /**
@@ -280,7 +290,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
      */
     @Override
     public void onCategoryOptionChanged(Place.Category category, boolean chosen) {
-        for (Map.Entry<Marker, Place> e : mpMap.entrySet()) {
+        for (Map.Entry<Marker, Place> e : markerCache.snapshot().entrySet()) {
             if (e.getValue().category == category) {
                 e.getKey().setVisible(chosen);
             }
@@ -322,7 +332,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Place selected = mpMap.get(marker);
+        Place selected = markerCache.get(marker);
 
         Intent i = new Intent(this, DetailActivity.class);
         i.putExtra(DetailFragment.KEY_PLACE, selected);
