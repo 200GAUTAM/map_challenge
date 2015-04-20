@@ -2,6 +2,7 @@ package com.suresh.mapchallenge;
 
 import android.animation.Animator;
 import android.content.Intent;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -48,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
     private LatLng searchLocation;
-    private boolean paddingSet = false;
+    private boolean paddingSet = false, centreMarked = false;
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
 
     private HashMap<Marker, Place> mpMap = new HashMap<Marker, Place>(); //Storing markers and their corresponding places
@@ -344,9 +345,18 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        Log.v("test", "onCameraChange() called");
         searchLocation = cameraPosition.target;
+        Log.v("test", "Zoom level = " + cameraPosition.zoom);
         getNearbyPlaces();
+
+        if (!centreMarked) {
+            Point mapCentre = map.getProjection().toScreenLocation(cameraPosition.target);
+            View point = findViewById(R.id.imgCentre);
+            point.setX(mapCentre.x - point.getWidth() / 2);
+            point.setY(mapCentre.y - point.getHeight());
+
+            centreMarked = true;
+        }
     }
 
     @Override
