@@ -353,13 +353,12 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         getNearbyPlaces();
 
         if (!centreMarked) {
-            Log.v("marker", "Positioning marker");
-            Point mapCentre = map.getProjection().toScreenLocation(cameraPosition.target);
-            View point = findViewById(R.id.imgCentre);
-            point.setX(mapCentre.x - point.getWidth() / 2);
-            point.setY(mapCentre.y - point.getHeight());
-
             centreMarked = true;
+            Point mapCentre = map.getProjection().toScreenLocation(cameraPosition.target);
+            View centreMarker = findViewById(R.id.imgCentre);
+            centreMarker.setX(mapCentre.x - centreMarker.getWidth() / 2);
+            centreMarker.setY(mapCentre.y - centreMarker.getHeight());
+            centreMarker.setVisibility(View.VISIBLE);
         }
     }
 
