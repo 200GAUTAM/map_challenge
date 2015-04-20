@@ -2,6 +2,7 @@ package com.suresh.mapchallenge.api;
 
 import android.location.Location;
 import android.net.Uri;
+import android.nfc.Tag;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -20,6 +21,8 @@ import java.util.Iterator;
  * Created by suresh on 18/4/15.
  */
 public class PlacesApiHelper implements Constants {
+
+    public static final String TAG_NEARBY_REQUESTS = "tag_nearby_requests";
 
     /**
      * Used to initiate a search for places around a particular location
@@ -59,6 +62,9 @@ public class PlacesApiHelper implements Constants {
         NearbySearchParser parser = new NearbySearchParser(resultListener);
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, builder.build().toString(),
                 null, parser, parser);
+
+        //Tagging request so that it can be cancelled later if required
+        request.setTag(TAG_NEARBY_REQUESTS);
 
         if (requestDelay > 0) {
             APP.getInstance().addRequestWithDelay(request, requestDelay);

@@ -1,6 +1,7 @@
 package com.suresh.mapchallenge;
 
 import android.animation.Animator;
+import android.app.Application;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
@@ -252,6 +253,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void getNearbyPlaces() {
+        //Cancel existing/pending search requests
+        APP.getInstance().cancelRequests(PlacesApiHelper.TAG_NEARBY_REQUESTS);
+
         toggleLoadingSection(true);
         PlacesApiHelper.getPlacesNearby(searchLocation, new NearbySearchResult());
     }
@@ -346,10 +350,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         searchLocation = cameraPosition.target;
-        Log.v("test", "Zoom level = " + cameraPosition.zoom);
         getNearbyPlaces();
 
         if (!centreMarked) {
+            Log.v("marker", "Positioning marker");
             Point mapCentre = map.getProjection().toScreenLocation(cameraPosition.target);
             View point = findViewById(R.id.imgCentre);
             point.setX(mapCentre.x - point.getWidth() / 2);

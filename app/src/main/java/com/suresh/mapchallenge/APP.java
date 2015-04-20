@@ -58,6 +58,10 @@ public class APP extends Application {
         }, millis);
     }
 
+    public void cancelRequests(Object tag) {
+        requestQueue.cancelAll(tag);
+    }
+
     public ImageLoader getBannerImageLoader() {
         return bannerImageLoader;
     }
