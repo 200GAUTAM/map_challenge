@@ -23,6 +23,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -42,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener, View.OnLayoutChangeListener,
         View.OnClickListener, CategoryAdapter.OnCategoryChangedListener,
-        View.OnTouchListener {
+        View.OnTouchListener, GoogleMap.OnCameraChangeListener, GoogleMap.OnMyLocationButtonClickListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap map;
@@ -237,18 +238,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private void setCameraToCurrentUserLocation() {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(searchLocation, MAP_ZOOM_LEVEL);
         map.animateCamera(update, 1, null);
-        drawSearchLocationMarker();
-    }
-
-    private void drawSearchLocationMarker() {
-        MarkerOptions locationMarker = new MarkerOptions();
-        locationMarker.position(searchLocation);
-        locationMarker.title(getString(R.string.search_location));
-        locationMarker.snippet(getString(R.string.search_location_hint));
-        locationMarker.icon(BitmapDescriptorFactory.defaultMarker(SEARCH_LOCATION_MARKER_HUE));
-        locationMarker.draggable(true);
-
-        map.addMarker(locationMarker);
     }
 
     private void trySettingMapPadding() {
@@ -293,9 +282,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         placeSet.clear();
         map.clear();
 
-        //Redraw the search location marker
-        drawSearchLocationMarker();
-
         //Trigger search API call again
         getNearbyPlaces();
     }
@@ -337,15 +323,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
-        map.setOnMarkerDragListener(new MarkerDragListener());
-        map.setOnMyLocationButtonClickListener(new MyLocationButtonListener());
+        map.setOnCameraChangeListener(this);
+        map.setOnMyLocationButtonClickListener(this);
         map.setOnInfoWindowClickListener(this);
 
         trySettingMapPadding();
 
         //Restore markers if available
         if (placeSet.size() > 0) plotPlaces(placeSet, false);
-        if (searchLocation != null) drawSearchLocationMarker();
     }
 
     @Override
@@ -357,30 +342,21 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         startActivity(i);
     }
 
-    private class MarkerDragListener implements GoogleMap.OnMarkerDragListener {
-
-        @Override public void onMarkerDragStart(Marker marker) { }
-
-        @Override public void onMarkerDrag(Marker marker) { }
-
-        @Override
-        public void onMarkerDragEnd(Marker marker) {
-            searchLocation = marker.getPosition();
-            getNearbyPlaces();
-        }
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+        Log.v("test", "onCameraChange() called");
+        searchLocation = cameraPosition.target;
+        getNearbyPlaces();
     }
 
-    private class MyLocationButtonListener implements GoogleMap.OnMyLocationButtonClickListener {
-
-        @Override
-        public boolean onMyLocationButtonClick() {
-            Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            if (currentLocation != null) {
-                searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                restartSearch();
-            }
-            return false;
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (currentLocation != null) {
+            searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            restartSearch();
         }
+        return false;
     }
 
     /*
@@ -404,7 +380,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             //Initialise screen
             searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             setCameraToCurrentUserLocation(); //Initialise the map to the user's current location
-            getNearbyPlaces(); //Trigger the API call to get nearby places
+//            getNearbyPlaces(); //Trigger the API call to get nearby places
 
         } else { //Location/GPS not enabled on device. Display error
             toggleGPSErrorSection(true);
