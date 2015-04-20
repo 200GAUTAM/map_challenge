@@ -8,5 +8,6 @@
     <string name="location_settings">Location Settings</string>
     <string name="search_location">Search Location</string>
     <string name="search_location_hint">Drag to change search area</string>
-    <string name="zoom_error">Zoom in to search</string>
+    <string name="zoom_in_warning">Zoom in to search</string>
+    <string name="zoom_out_warning">Zoom out to search</string>
 </resources>

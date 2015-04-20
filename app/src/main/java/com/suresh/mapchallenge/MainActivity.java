@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -67,6 +68,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     //View handles
     private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor,
             errorSection, loadingSection, zoomError;
+    private TextView tvZoomWarning;
     private ListView listView;
 
     @Override
@@ -102,6 +104,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         errorSection = findViewById(R.id.errorSection);
         loadingSection = findViewById(R.id.loadingSection);
         zoomError = findViewById(R.id.zoomError);
+        tvZoomWarning = (TextView) findViewById(R.id.tvZoomWarning);
         errorSection.setOnTouchListener(this);
         listView = (ListView) findViewById(R.id.categoryList);
         listView.setDividerHeight(0);
@@ -352,15 +355,15 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         Log.v("zoom", "" + cameraPosition.zoom);
-        if (cameraPosition.zoom >= SEARCH_MIN_ZOOM) {
+        if (cameraPosition.zoom >= SEARCH_MIN_ZOOM && cameraPosition.zoom <= SEARCH_MAX_ZOOM) { //Within range
             if (zoomError.isShown()) toggleZoomError(false); //Hide the zoom warning if displayed
 
-            if (cameraPosition.zoom < SEARCH_MAX_ZOOM) { //Within range. Trigger call to search for places
-                searchLocation = cameraPosition.target;
-                getNearbyPlaces();
-            }
+            searchLocation = cameraPosition.target;
+            getNearbyPlaces();
         } else { //Too far out. Display warning
-            toggleZoomError(true);
+            int warningTextRes = (cameraPosition.zoom < SEARCH_MIN_ZOOM)
+                    ? R.string.zoom_in_warning : R.string.zoom_out_warning;
+            toggleZoomError(true, warningTextRes);
         }
 
 
@@ -421,6 +424,11 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void toggleZoomError(boolean shouldDisplay) {
+        toggleZoomError(shouldDisplay, -1);
+    }
+
+    private void toggleZoomError(boolean shouldDisplay, int warningTextRes) {
+        if (warningTextRes != -1) tvZoomWarning.setText(warningTextRes);
         animateTransition(zoomError, 300, shouldDisplay);
     }
 

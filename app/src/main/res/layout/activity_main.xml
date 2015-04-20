@@ -85,10 +85,10 @@
         app:cardUseCompatPadding="true">
 
         <TextView
+            android:id="@+id/tvZoomWarning"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:text="@string/zoom_error"
             android:textColor="#ff9a2700"
             android:textStyle="bold"
             android:textSize="16sp"
