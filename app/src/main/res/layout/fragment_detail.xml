@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#ffc6c6c6">
 
     <!-- IMAGE HEADER -->
     <FrameLayout
@@ -45,15 +46,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:layout_marginTop="@dimen/dummy_view_height"
             android:orientation="vertical">
 
+            <!-- DETAILS SECTION -->
             <android.support.v7.widget.CardView
                 android:id="@+id/detailsSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardUseCompatPadding="true">
@@ -67,7 +67,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Address:"
+                        android:text="@string/address"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#000000"/>
@@ -82,9 +82,6 @@
                         android:layout_marginTop="8dp"/>
 
                 </LinearLayout>
-
-
-
             </android.support.v7.widget.CardView>
 
 
@@ -102,13 +99,13 @@
                     android:id="@+id/llOpeningHrs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/content_padding"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:padding="@dimen/content_padding"
                         android:orientation="horizontal">
 
                         <TextView
@@ -138,17 +135,72 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/divider_height"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="@dimen/content_padding"
                         android:background="@color/divider_color"/>
 
                     <include
                         layout="@layout/row_opening_time" />
 
                 </LinearLayout>
-
             </android.support.v7.widget.CardView>
 
+            <!-- REVIEWS SECTION -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/reviewsSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/llReviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/content_padding"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/reviews"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="#000000"/>
+
+                        <Space
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:id="@+id/tvAvgRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            android:textColor="@color/place_avg_rating"
+                            android:textStyle="italic"
+                            android:text="4.6"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/divider_height"
+                        android:layout_marginTop="@dimen/content_padding"
+                        android:background="@color/divider_color"/>
+
+                    <include
+                        layout="@layout/row_review" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
 

@@ -13,4 +13,6 @@
     <string name="opening_hours">Opening Hours:</string>
     <string name="place_open">Now Open</string>
     <string name="place_closed">Closed</string>
+    <string name="address">Address:</string>
+    <string name="reviews">Reviews:</string>
 </resources>
