@@ -204,11 +204,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         super.onStart();
         googleApiClient.connect();
 
-        if (!isNetworkConnected()) {
-            toggleErrorSection(ErrorType.NETWORK, true);
-        } else {
-            if (errorSection.isShown()) toggleErrorSection(ErrorType.NETWORK, false);
-        }
+        //Show network error if required
+        toggleErrorSection(ErrorType.NETWORK, !isNetworkConnected());
     }
 
     @Override
@@ -307,7 +304,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         outState.putSerializable(KEY_PLACES, placeSet);
         outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
         outState.putParcelable(KEY_SEARCH_LOCATION_MARKER, searchLocation);
-        if (currentError != null) outState.putInt(KEY_CURRENT_ERROR, currentError.ordinal());
+//        if (currentError != null) outState.putInt(KEY_CURRENT_ERROR, currentError.ordinal());
     }
 
     @Override
@@ -403,7 +400,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         if (currentLocation != null) {
             //Hide the error section if visible (Happens if the user returns to the app after changing GPS settings)
-            if (errorSection.isShown()) toggleErrorSection(ErrorType.GPS, false);
+            toggleErrorSection(ErrorType.GPS, false);
 
             if (searchLocation != null) return; //Abort if we already have data (happens when screen rotates, user returns to screen/app etc.)
 
@@ -436,6 +433,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
                 imgErrorIcon.setImageDrawable(getResources().getDrawable(errorIcon));
                 tvErrorText.setText(errorText);
+            } else {
+                return;
             }
         } else {
             Log.v("test", "Current error = " + currentError);
@@ -446,7 +445,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             }
         }
 
-        Utils.animateTransition(errorSection, 600, shouldDisplay);
+        int vis = (shouldDisplay) ? View.VISIBLE : View.GONE;
+        errorSection.setVisibility(vis);
     }
 
     private void toggleZoomError(boolean shouldDisplay) {
