@@ -35,6 +35,7 @@ import com.suresh.mapchallenge.api.parser.BaseParser;
 import com.suresh.mapchallenge.utils.CategoryAdapter;
 import com.suresh.mapchallenge.utils.Constants;
 import com.suresh.mapchallenge.utils.MarkerCache;
+import com.suresh.mapchallenge.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -184,32 +185,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void showHideDropdown() {
-        animateTransition(categoryDropdownSection, 200, !categoryDropdownSection.isShown());
+        Utils.animateTransition(categoryDropdownSection, 200, !categoryDropdownSection.isShown());
     }
 
-    private static class FadeAnimationListener implements Animator.AnimatorListener {
 
-        private View view;
-        private int visibilityAfterAnim;
-
-        private FadeAnimationListener(View view, int visibility) {
-            this.view = view;
-            visibilityAfterAnim = visibility;
-        }
-
-        @Override
-        public void onAnimationStart(Animator animation) {
-            if (visibilityAfterAnim == View.VISIBLE) view.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onAnimationEnd(Animator animation) {
-            if (visibilityAfterAnim == View.GONE) view.setVisibility(View.GONE);
-        }
-
-        @Override public void onAnimationCancel(Animator animation) { }
-        @Override public void onAnimationRepeat(Animator animation) { }
-    }
 
     @Override
     protected void onStart() {
@@ -420,7 +399,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     @Override public void onConnectionFailed(ConnectionResult connectionResult) { Log.v("test", "Connection Failed: " + connectionResult.toString()); }
 
     private void toggleGPSErrorSection(boolean shouldDisplay) {
-        animateTransition(errorSection, 600, shouldDisplay);
+        Utils.animateTransition(errorSection, 600, shouldDisplay);
     }
 
     private void toggleZoomError(boolean shouldDisplay) {
@@ -429,24 +408,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     private void toggleZoomError(boolean shouldDisplay, int warningTextRes) {
         if (warningTextRes != -1) tvZoomWarning.setText(warningTextRes);
-        animateTransition(zoomError, 300, shouldDisplay);
+        Utils.animateTransition(zoomError, 300, shouldDisplay);
     }
 
     private void toggleLoadingSection(boolean shouldDisplay) {
-        animateTransition(loadingSection, 600, shouldDisplay);
+        Utils.animateTransition(loadingSection, 600, shouldDisplay);
     }
 
-    private void animateTransition(View view, long duration, boolean shouldDisplay) {
-        float alphaVal = (shouldDisplay) ? 1 : 0;
-        int visibility = (shouldDisplay) ? View.VISIBLE : View.GONE;
 
-        view.animate()
-                .setDuration(duration)
-                .setInterpolator(new DecelerateInterpolator())
-                .alpha(alphaVal)
-                .setListener(new FadeAnimationListener(view, visibility))
-                .start();
-    }
 
     private class NearbySearchResult implements BaseParser.ResultListener<ArrayList<Place>> {
         @Override
