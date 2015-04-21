@@ -27,8 +27,10 @@ import java.text.DecimalFormat;
 public class DetailFragment extends Fragment {
 
     public static final String KEY_PLACE = "place";
+    public static final String KEY_PLACE_DETAIL = "place_detail";
 
     private Place place;
+    private PlaceDetail info;
     private LayoutInflater inflater;
 
     //View handles
@@ -51,8 +53,6 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         place = (Place) getArguments().getSerializable(KEY_PLACE);
-
-        PlacesApiHelper.getPlaceDetails(place.id, new PlaceDetailResult());
     }
 
     @Override
@@ -91,9 +91,16 @@ public class DetailFragment extends Fragment {
         }
         tvTitle.setText(place.name);
         tvAddress.setText(place.address);
+
+        if (savedInstanceState != null) {
+            info = (PlaceDetail) savedInstanceState.getSerializable(KEY_PLACE_DETAIL);
+            displayDetailedInformation();
+        } else {
+            PlacesApiHelper.getPlaceDetails(place.id, new PlaceDetailResult());
+        }
     }
 
-    public void displayDetailedInformation(PlaceDetail info) {
+    public void displayDetailedInformation() {
         progressBar.setVisibility(View.GONE);
 //        LayoutInflater inflater = LayoutInflater.from(getActivity());
 
@@ -144,11 +151,19 @@ public class DetailFragment extends Fragment {
         Utils.animateTransition(reviewsSection, 600, true);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(KEY_PLACE_DETAIL, info);
+    }
+
     private class PlaceDetailResult implements BaseParser.ResultListener<PlaceDetail> {
 
         @Override
         public void consumeResult(PlaceDetail result, boolean moreResults) {
-            displayDetailedInformation(result);
+            info = result;
+            displayDetailedInformation();
         }
     }
 }
