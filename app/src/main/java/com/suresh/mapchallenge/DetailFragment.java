@@ -1,5 +1,6 @@
 package com.suresh.mapchallenge;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,7 +27,8 @@ import java.text.DecimalFormat;
 /**
  * Created by suresh on 18/4/15.
  */
-public class DetailFragment extends Fragment implements ListenScrollView.OnScrollChangedListener {
+public class DetailFragment extends Fragment implements ListenScrollView.OnScrollChangedListener,
+        View.OnLayoutChangeListener {
 
     public static final String KEY_PLACE = "place";
     public static final String KEY_PLACE_DETAIL = "place_detail";
@@ -35,11 +37,14 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
     private PlaceDetail info;
     private LayoutInflater inflater;
 
+    //Header scrolling variables
+    private int headerHeight, scrollY;
+
     //View handles
     private Toolbar toolbar;
     private NetworkImageView imgBanner;
     private TextView tvTitle, tvAddress, tvOpenStatus, tvAvgRating;
-    private View openingHrsSection, reviewsSection, progressBar;
+    private View openingHrsSection, reviewsSection, progressBar, headerSection;
     private LinearLayout llOpeningHrs, llReviews;
 
     public static DetailFragment newInstance(Place place) {
@@ -69,6 +74,7 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
         openingHrsSection = view.findViewById(R.id.openingHrsSection);
         reviewsSection = view.findViewById(R.id.reviewsSection);
         progressBar = view.findViewById(R.id.progressBar);
+        headerSection = view.findViewById(R.id.headerSection);
 
         tvOpenStatus = (TextView) view.findViewById(R.id.tvOpenStatus);
         llOpeningHrs = (LinearLayout) view.findViewById(R.id.llOpeningHrs);
@@ -77,6 +83,7 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
         llReviews = (LinearLayout) view.findViewById(R.id.llReviews);
 
         ((ListenScrollView)view.findViewById(R.id.svContent)).setListener(this);
+        view.findViewById(R.id.spaceForHeader).addOnLayoutChangeListener(this);
 
         return view;
     }
@@ -166,7 +173,28 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
 
     @Override
     public void onScrollChanged(int l, int t, int oldl, int oldt) {
+        scrollY += (t - oldt);
         Log.v("scroll", l + ", " + t + ", " + oldl + ", " + oldt);
+
+        if (oldt <= headerHeight) { //In header scroll range
+            doScrollEffect();
+        }
+    }
+
+    private void doScrollEffect() {
+        headerSection.setTranslationY(-scrollY);
+        imgBanner.setTranslationY(scrollY * 0.5f);
+
+        float ratio = scrollY / headerHeight;
+        int a = (int) (ratio * 255);
+        toolbar.setBackgroundColor(Color.argb(a, 0, 0, 0));
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        v.removeOnLayoutChangeListener(this);
+
+        headerHeight = bottom - top;
     }
 
     private class PlaceDetailResult implements BaseParser.ResultListener<PlaceDetail> {
