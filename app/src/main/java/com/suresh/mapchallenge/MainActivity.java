@@ -1,9 +1,11 @@
 package com.suresh.mapchallenge;
 
-import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -12,7 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,7 +41,6 @@ import com.suresh.mapchallenge.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private boolean paddingSet = false, centreMarked = false;
     private boolean ignoreCameraChange = false; //Flag to decide if we should ignore the camera movement (happens when a user clicks on a marker. Don't want to trigger an API call then)
     private int mapTopPadding = -1; //Amount of padding to be applied to the top of the map (to prevent the category dropdown overlapping the map controls)
+    private ErrorType currentError; //Track the current error being displayed
 
     private MarkerCache markerCache = new MarkerCache(MAX_MARKER_COUNT, this); //Storing markers and their corresponding places
     private HashSet<Place> placeSet; //Maintaining hashset of places to prevent duplicates
@@ -68,11 +70,13 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private static final String KEY_PLACES = "place_set";
     private static final String KEY_CATEGORY_SELECTION = "selected_categories";
     private static final String KEY_SEARCH_LOCATION_MARKER = "search_location_marker";
+    private static final String KEY_CURRENT_ERROR = "current_error";
 
     //View handles
     private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor,
             errorSection, loadingSection, zoomError;
-    private TextView tvZoomWarning;
+    private TextView tvZoomWarning, tvErrorText;
+    private ImageView imgErrorIcon;
     private ListView listView;
 
     @Override
@@ -109,6 +113,8 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         loadingSection = findViewById(R.id.loadingSection);
         zoomError = findViewById(R.id.zoomError);
         tvZoomWarning = (TextView) findViewById(R.id.tvZoomWarning);
+        tvErrorText = (TextView) findViewById(R.id.tvErrorText);
+        imgErrorIcon = (ImageView) findViewById(R.id.imgErrorIcon);
         errorSection.setOnTouchListener(this);
         listView = (ListView) findViewById(R.id.categoryList);
         listView.setDividerHeight(0);
@@ -120,6 +126,9 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             paddingSet = false;
             adapter = new CategoryAdapter(this);
         } else {
+            if (savedInstanceState.containsKey(KEY_CURRENT_ERROR)) {
+                currentError = ErrorType.values()[savedInstanceState.getInt(KEY_CURRENT_ERROR)];
+            }
             searchLocation = savedInstanceState.getParcelable(KEY_SEARCH_LOCATION_MARKER);
             placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
             paddingSet = false;
@@ -194,12 +203,25 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     protected void onStart() {
         super.onStart();
         googleApiClient.connect();
+
+        if (!isNetworkConnected()) {
+            toggleErrorSection(ErrorType.NETWORK, true);
+        } else {
+            if (errorSection.isShown()) toggleErrorSection(ErrorType.NETWORK, false);
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         googleApiClient.disconnect();
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
     private void setCameraToCurrentUserLocation() {
@@ -285,6 +307,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         outState.putSerializable(KEY_PLACES, placeSet);
         outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
         outState.putParcelable(KEY_SEARCH_LOCATION_MARKER, searchLocation);
+        if (currentError != null) outState.putInt(KEY_CURRENT_ERROR, currentError.ordinal());
     }
 
     @Override
@@ -380,7 +403,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
         if (currentLocation != null) {
             //Hide the error section if visible (Happens if the user returns to the app after changing GPS settings)
-            if (errorSection.isShown()) toggleGPSErrorSection(false);
+            if (errorSection.isShown()) toggleErrorSection(ErrorType.GPS, false);
 
             if (searchLocation != null) return; //Abort if we already have data (happens when screen rotates, user returns to screen/app etc.)
 
@@ -390,7 +413,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 //            getNearbyPlaces(); //Trigger the API call to get nearby places
 
         } else { //Location/GPS not enabled on device. Display error
-            toggleGPSErrorSection(true);
+            toggleErrorSection(ErrorType.GPS, true);
         }
     }
 
@@ -398,7 +421,31 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
 
     @Override public void onConnectionFailed(ConnectionResult connectionResult) { Log.v("test", "Connection Failed: " + connectionResult.toString()); }
 
-    private void toggleGPSErrorSection(boolean shouldDisplay) {
+    private void toggleErrorSection(ErrorType type, boolean shouldDisplay) {
+        if (shouldDisplay) {
+            if (currentError == null) { //Proceed only if there's no error being displayed at that moment
+                currentError = type;
+                int errorIcon, errorText;
+                if (type == ErrorType.GPS) { //GPS error
+                    errorIcon = R.drawable.ic_gps_off;
+                    errorText = R.string.gps_error;
+                } else { //Network error
+                    errorIcon = R.drawable.ic_gps_off; //TODO: Add icon for network error
+                    errorText = R.string.network_error;
+                }
+
+                imgErrorIcon.setImageDrawable(getResources().getDrawable(errorIcon));
+                tvErrorText.setText(errorText);
+            }
+        } else {
+            Log.v("test", "Current error = " + currentError);
+            if (currentError != type) {
+                return; //Don't hide the section if this is not the error being displayed right now
+            } else {
+                currentError = null; //Clear the current error
+            }
+        }
+
         Utils.animateTransition(errorSection, 600, shouldDisplay);
     }
 
