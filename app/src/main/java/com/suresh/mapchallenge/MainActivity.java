@@ -70,7 +70,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     private static final String KEY_PLACES = "place_set";
     private static final String KEY_CATEGORY_SELECTION = "selected_categories";
     private static final String KEY_SEARCH_LOCATION_MARKER = "search_location_marker";
-    private static final String KEY_CURRENT_ERROR = "current_error";
 
     //View handles
     private View categoryDropdownToggle, categoryDropdownSection, touchInterceptor,
@@ -126,9 +125,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             paddingSet = false;
             adapter = new CategoryAdapter(this);
         } else {
-            if (savedInstanceState.containsKey(KEY_CURRENT_ERROR)) {
-                currentError = ErrorType.values()[savedInstanceState.getInt(KEY_CURRENT_ERROR)];
-            }
             searchLocation = savedInstanceState.getParcelable(KEY_SEARCH_LOCATION_MARKER);
             placeSet = (HashSet<Place>) savedInstanceState.getSerializable(KEY_PLACES);
             paddingSet = false;
@@ -194,6 +190,14 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
     }
 
     private void showHideDropdown() {
+        if (!categoryDropdownSection.isShown()) {
+            touchInterceptor.setVisibility(View.VISIBLE);
+            touchInterceptor.setOnClickListener(this);
+        } else {
+            touchInterceptor.setVisibility(View.GONE);
+            touchInterceptor.setOnClickListener(null);
+        }
+
         Utils.animateTransition(categoryDropdownSection, 200, !categoryDropdownSection.isShown());
     }
 
@@ -304,7 +308,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
         outState.putSerializable(KEY_PLACES, placeSet);
         outState.putBooleanArray(KEY_CATEGORY_SELECTION, adapter.getChecked());
         outState.putParcelable(KEY_SEARCH_LOCATION_MARKER, searchLocation);
-//        if (currentError != null) outState.putInt(KEY_CURRENT_ERROR, currentError.ordinal());
     }
 
     @Override
@@ -407,7 +410,6 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
             //Initialise screen
             searchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             setCameraToCurrentUserLocation(); //Initialise the map to the user's current location
-//            getNearbyPlaces(); //Trigger the API call to get nearby places
 
         } else { //Location/GPS not enabled on device. Display error
             toggleErrorSection(ErrorType.GPS, true);
@@ -427,7 +429,7 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
                     errorIcon = R.drawable.ic_gps_off;
                     errorText = R.string.gps_error;
                 } else { //Network error
-                    errorIcon = R.drawable.ic_gps_off; //TODO: Add icon for network error
+                    errorIcon = R.drawable.ic_wifi_off;
                     errorText = R.string.network_error;
                 }
 
@@ -437,11 +439,10 @@ public class MainActivity extends ActionBarActivity implements Constants, OnMapR
                 return;
             }
         } else {
-            Log.v("test", "Current error = " + currentError);
-            if (currentError != type) {
-                return; //Don't hide the section if this is not the error being displayed right now
-            } else {
+            if (currentError == type) {
                 currentError = null; //Clear the current error
+            } else {
+                return; //Don't hide the section if this is not the error being displayed right now
             }
         }
 
