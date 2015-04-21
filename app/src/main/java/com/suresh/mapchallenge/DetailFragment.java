@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.model.PlaceDetail;
 import com.suresh.mapchallenge.api.parser.BaseParser;
+import com.suresh.mapchallenge.utils.ListenScrollView;
 import com.suresh.mapchallenge.utils.Utils;
 
 import java.text.DecimalFormat;
@@ -24,7 +26,7 @@ import java.text.DecimalFormat;
 /**
  * Created by suresh on 18/4/15.
  */
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements ListenScrollView.OnScrollChangedListener {
 
     public static final String KEY_PLACE = "place";
     public static final String KEY_PLACE_DETAIL = "place_detail";
@@ -73,6 +75,8 @@ public class DetailFragment extends Fragment {
 
         tvAvgRating = (TextView) view.findViewById(R.id.tvAvgRating);
         llReviews = (LinearLayout) view.findViewById(R.id.llReviews);
+
+        ((ListenScrollView)view.findViewById(R.id.svContent)).setListener(this);
 
         return view;
     }
@@ -156,6 +160,11 @@ public class DetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         outState.putSerializable(KEY_PLACE_DETAIL, info);
+    }
+
+    @Override
+    public void onScrollChanged(int l, int t, int oldl, int oldt) {
+        Log.v("scroll", l + ", " + t + ", " + oldl + ", " + oldt);
     }
 
     private class PlaceDetailResult implements BaseParser.ResultListener<PlaceDetail> {

@@ -37,7 +37,7 @@
     </FrameLayout>
 
     <!-- MAIN CONTENT -->
-    <ScrollView
+    <com.suresh.mapchallenge.utils.ListenScrollView
         android:id="@+id/svContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -213,7 +213,7 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>
-    </ScrollView>
+    </com.suresh.mapchallenge.utils.ListenScrollView>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
