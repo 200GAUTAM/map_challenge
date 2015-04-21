@@ -29,6 +29,7 @@ public class DetailFragment extends Fragment {
     public static final String KEY_PLACE = "place";
 
     private Place place;
+    private LayoutInflater inflater;
 
     //View handles
     private Toolbar toolbar;
@@ -56,6 +57,7 @@ public class DetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        this.inflater = inflater;
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -93,14 +95,14 @@ public class DetailFragment extends Fragment {
 
     public void displayDetailedInformation(PlaceDetail info) {
         progressBar.setVisibility(View.GONE);
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
+//        LayoutInflater inflater = LayoutInflater.from(getActivity());
 
-        if (info.openingHours != null) bindOpeningHoursInfo(inflater, info.openingHours);
+        if (info.openingHours != null) bindOpeningHoursInfo(info.openingHours);
 
-        if (info.reviews != null) bindReviewsInfo(inflater, info.avgRating, info.reviews);
+        if (info.reviews != null) bindReviewsInfo(info.avgRating, info.reviews);
     }
 
-    public void bindOpeningHoursInfo(LayoutInflater inflater, PlaceDetail.OpeningHours openingHours) {
+    public void bindOpeningHoursInfo(PlaceDetail.OpeningHours openingHours) {
         //Binding open now information
         int openText, openTextColor;
         if (openingHours.isOpenNow) {
@@ -124,7 +126,7 @@ public class DetailFragment extends Fragment {
         Utils.animateTransition(openingHrsSection, 600, true);
     }
 
-    public void bindReviewsInfo(LayoutInflater inflater, float avgRating, PlaceDetail.Review[] reviews) {
+    public void bindReviewsInfo(float avgRating, PlaceDetail.Review[] reviews) {
         tvAvgRating.setText(new DecimalFormat("#.#").format(avgRating));
 
         //Binding review information
