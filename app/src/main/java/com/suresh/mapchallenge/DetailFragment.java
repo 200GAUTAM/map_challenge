@@ -31,7 +31,7 @@ import java.text.DecimalFormat;
  * Created by suresh on 18/4/15.
  */
 public class DetailFragment extends Fragment implements ListenScrollView.OnScrollChangedListener,
-        View.OnLayoutChangeListener, Toolbar.OnMenuItemClickListener {
+        View.OnLayoutChangeListener, Toolbar.OnMenuItemClickListener, View.OnClickListener {
 
     public static final String KEY_PLACE = "place";
     public static final String KEY_PLACE_DETAIL = "place_detail";
@@ -97,6 +97,7 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
 
         ActionBarActivity activity = (ActionBarActivity) getActivity();
         activity.setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(this);
         activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         if (place.photoId != null) {
@@ -179,6 +180,15 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
         } else {
             return false;
         }
+    }
+
+    /**
+     * Listener for the back button on the toolbar
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        getActivity().finish();
     }
 
     public void dialPhoneNumber(String phoneNumber) {
