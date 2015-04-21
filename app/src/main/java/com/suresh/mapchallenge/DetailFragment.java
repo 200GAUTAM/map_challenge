@@ -38,7 +38,7 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
     private LayoutInflater inflater;
 
     //Header scrolling variables
-    private int headerHeight, scrollY;
+    private int headerHeight;
 
     //View handles
     private Toolbar toolbar;
@@ -173,6 +173,7 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
 
     @Override
     public void onScrollChanged(int l, int t, int oldl, int oldt) {
+        int scrollY;
         if (t <= 0 || t >= headerHeight) {
             if (t <= 0) {
                 scrollY = 0;
@@ -183,12 +184,10 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
             scrollY = t;
         }
 
-        Log.v("scroll", l + ", " + t + ", " + oldl + ", " + oldt + ", " + scrollY);
-
-        doScrollEffect();
+        doScrollEffect(scrollY);
     }
 
-    private void doScrollEffect() {
+    private void doScrollEffect(int scrollY) {
         headerSection.setTranslationY(-scrollY);
         imgBanner.setTranslationY(scrollY * 0.5f);
 
