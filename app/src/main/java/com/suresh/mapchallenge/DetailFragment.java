@@ -92,6 +92,8 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
         if (place.photoId != null) {
             imgBanner.setImageUrl(PlacesApiHelper.getPhotoUrl(place.photoId),
                     APP.getInstance().getBannerImageLoader());
+        } else {
+            imgBanner.setDefaultImageResId(R.drawable.food_and_beverages);
         }
         tvTitle.setText(place.name);
         tvAddress.setText(place.address);

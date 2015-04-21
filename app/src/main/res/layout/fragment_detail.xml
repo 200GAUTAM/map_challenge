@@ -31,7 +31,6 @@
             android:layout_gravity="bottom"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
-            android:text="Something something"
             android:padding="@dimen/content_padding"/>
 
     </FrameLayout>
