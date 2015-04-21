@@ -105,7 +105,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="@dimen/detail_card_corner_radius"
-                app:cardUseCompatPadding="true">
+                app:cardUseCompatPadding="true"
+                android:visibility="gone"
+                android:alpha="0">
 
                 <LinearLayout
                     android:id="@+id/llOpeningHrs"
@@ -138,9 +140,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="20sp"
-                            android:textColor="@color/place_closed_text"
-                            android:textStyle="italic"
-                            android:text="@string/place_closed"/>
+                            android:textStyle="italic"/>
 
                     </LinearLayout>
 
@@ -150,8 +150,7 @@
                         android:layout_marginTop="@dimen/content_padding"
                         android:background="@color/divider_color"/>
 
-                    <include
-                        layout="@layout/row_opening_time" />
+                    <!-- Opening hours go here -->
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -163,7 +162,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="@dimen/detail_card_corner_radius"
-                app:cardUseCompatPadding="true">
+                app:cardUseCompatPadding="true"
+                android:visibility="gone"
+                android:alpha="0">
 
                 <LinearLayout
                     android:id="@+id/llReviews"
@@ -197,8 +198,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="20sp"
                             android:textColor="@color/place_avg_rating"
-                            android:textStyle="italic"
-                            android:text="4.6"/>
+                            android:textStyle="italic"/>
 
                     </LinearLayout>
 
@@ -208,8 +208,7 @@
                         android:layout_marginTop="@dimen/content_padding"
                         android:background="@color/divider_color"/>
 
-                    <include
-                        layout="@layout/row_review" />
+                    <!-- Reviews go here -->
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>

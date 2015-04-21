@@ -31,7 +31,7 @@ public class PlaceDetailParser extends BaseParser<JSONObject, PlaceDetail> {
                 PlaceDetail.OpeningHours opHrs = new PlaceDetail.OpeningHours();
                 detail.openingHours = opHrs;
 
-                opHrs.openNow = opInfo.getBoolean("open_now");
+                opHrs.isOpenNow = opInfo.getBoolean("open_now");
 
                 JSONArray dayTimingsText = opInfo.getJSONArray("weekday_text");
                 String[] dayTimings = new String[dayTimingsText.length()];

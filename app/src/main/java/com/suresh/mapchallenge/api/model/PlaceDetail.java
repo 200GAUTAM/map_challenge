@@ -10,7 +10,7 @@ public class PlaceDetail {
     public Review[] reviews;
 
     public static class OpeningHours {
-        public boolean openNow;
+        public boolean isOpenNow;
         public String[] dayTimings;
     }
 

@@ -1,15 +1,14 @@
 package com.suresh.mapchallenge;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -17,6 +16,7 @@ import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.model.PlaceDetail;
 import com.suresh.mapchallenge.api.parser.BaseParser;
+import com.suresh.mapchallenge.utils.Utils;
 
 /**
  * Created by suresh on 18/4/15.
@@ -30,7 +30,9 @@ public class DetailFragment extends Fragment {
     //View handles
     private Toolbar toolbar;
     private NetworkImageView imgBanner;
-    private TextView tvTitle, tvAddress;
+    private TextView tvTitle, tvAddress, tvOpenStatus;
+    private View openingHrsSection, reviewsSection, progressBar;
+    private LinearLayout llOpeningHrs;
 
     public static DetailFragment newInstance(Place place) {
         Bundle args = new Bundle();
@@ -57,6 +59,12 @@ public class DetailFragment extends Fragment {
         imgBanner = (NetworkImageView) view.findViewById(R.id.imgBanner);
         tvTitle = (TextView) view.findViewById(R.id.tvTitle);
         tvAddress = (TextView) view.findViewById(R.id.tvAddress);
+        openingHrsSection = view.findViewById(R.id.openingHrsSection);
+        reviewsSection = view.findViewById(R.id.reviewsSection);
+        progressBar = view.findViewById(R.id.progressBar);
+
+        tvOpenStatus = (TextView) view.findViewById(R.id.tvOpenStatus);
+        llOpeningHrs = (LinearLayout) view.findViewById(R.id.llOpeningHrs);
 
         return view;
     }
@@ -77,11 +85,45 @@ public class DetailFragment extends Fragment {
         tvAddress.setText(place.address);
     }
 
+    public void displayDetailedInformation(PlaceDetail info) {
+        progressBar.setVisibility(View.GONE);
+        bindOpeningHoursInfo(info.openingHours);
+    }
+
+    public void bindOpeningHoursInfo(PlaceDetail.OpeningHours openingHours) {
+        if (openingHours == null) {
+            return; //No opening hours info available
+        }
+
+        //Binding open now information
+        int openText, openTextColor;
+        if (openingHours.isOpenNow) {
+            openText = R.string.place_open;
+            openTextColor = R.color.place_open_text;
+        } else {
+            openText = R.string.place_closed;
+            openTextColor = R.color.place_closed_text;
+        }
+        tvOpenStatus.setText(openText);
+        tvOpenStatus.setTextColor(getResources().getColor(openTextColor));
+
+        //Binding daily timing information
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        for (String timing : openingHours.dayTimings) {
+            TextView timingRow = (TextView) inflater.inflate(R.layout.row_opening_time, llOpeningHrs, false);
+            timingRow.setText(timing);
+            llOpeningHrs.addView(timingRow);
+        }
+
+        //Displaying container
+        Utils.animateTransition(openingHrsSection, 600, true);
+    }
+
     private class PlaceDetailResult implements BaseParser.ResultListener<PlaceDetail> {
 
         @Override
         public void consumeResult(PlaceDetail result, boolean moreResults) {
-            Log.v("test", result.toString());
+            displayDetailedInformation(result);
         }
     }
 }
