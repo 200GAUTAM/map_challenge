@@ -1,6 +1,8 @@
 package com.suresh.mapchallenge;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -28,7 +31,7 @@ import java.text.DecimalFormat;
  * Created by suresh on 18/4/15.
  */
 public class DetailFragment extends Fragment implements ListenScrollView.OnScrollChangedListener,
-        View.OnLayoutChangeListener {
+        View.OnLayoutChangeListener, Toolbar.OnMenuItemClickListener {
 
     public static final String KEY_PLACE = "place";
     public static final String KEY_PLACE_DETAIL = "place_detail";
@@ -118,6 +121,7 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
 
         if (info.phoneNumber != null) {
             toolbar.inflateMenu(R.menu.fragment_detail_menu);
+            toolbar.setOnMenuItemClickListener(this);
         }
 
         if (info.openingHours != null) bindOpeningHoursInfo(info.openingHours);
@@ -165,6 +169,24 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
 
         //Displaying container
         Utils.animateTransition(reviewsSection, 600, true);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        if (menuItem.getItemId() == R.id.menu_call) {
+            dialPhoneNumber(info.phoneNumber);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void dialPhoneNumber(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + phoneNumber));
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @Override

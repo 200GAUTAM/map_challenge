@@ -21,8 +21,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/place_image_gradient_height"
-            android:background="@drawable/banner_img_gradient"
+            android:layout_height="@dimen/place_image_height"
+            android:background="#75000000"
             android:layout_gravity="bottom"/>
 
         <TextView
