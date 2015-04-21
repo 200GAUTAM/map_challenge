@@ -56,6 +56,8 @@ public class PlaceDetailParser extends BaseParser<JSONObject, PlaceDetail> {
                     review.rating = reviewObj.getInt("rating");
                     review.reviewText = reviewObj.getString("text");
                 }
+
+                detail.calculateAvgRating();
             }
 
             return detail;

@@ -7,6 +7,7 @@ public class PlaceDetail {
 
     public String phoneNumber;
     public OpeningHours openingHours;
+    public float avgRating;
     public Review[] reviews;
 
     public static class OpeningHours {
@@ -17,5 +18,16 @@ public class PlaceDetail {
     public static class Review {
         public String authorName, reviewText;
         public int rating;
+    }
+
+    public void calculateAvgRating() {
+        if (reviews != null) {
+            int sum = 0;
+            for (Review r : reviews) {
+                sum += r.rating;
+            }
+
+            avgRating = (float) sum / (float) reviews.length;
+        }
     }
 }

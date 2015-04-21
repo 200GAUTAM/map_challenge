@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -17,6 +18,8 @@ import com.suresh.mapchallenge.api.model.Place;
 import com.suresh.mapchallenge.api.model.PlaceDetail;
 import com.suresh.mapchallenge.api.parser.BaseParser;
 import com.suresh.mapchallenge.utils.Utils;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by suresh on 18/4/15.
@@ -30,9 +33,9 @@ public class DetailFragment extends Fragment {
     //View handles
     private Toolbar toolbar;
     private NetworkImageView imgBanner;
-    private TextView tvTitle, tvAddress, tvOpenStatus;
+    private TextView tvTitle, tvAddress, tvOpenStatus, tvAvgRating;
     private View openingHrsSection, reviewsSection, progressBar;
-    private LinearLayout llOpeningHrs;
+    private LinearLayout llOpeningHrs, llReviews;
 
     public static DetailFragment newInstance(Place place) {
         Bundle args = new Bundle();
@@ -66,6 +69,9 @@ public class DetailFragment extends Fragment {
         tvOpenStatus = (TextView) view.findViewById(R.id.tvOpenStatus);
         llOpeningHrs = (LinearLayout) view.findViewById(R.id.llOpeningHrs);
 
+        tvAvgRating = (TextView) view.findViewById(R.id.tvAvgRating);
+        llReviews = (LinearLayout) view.findViewById(R.id.llReviews);
+
         return view;
     }
 
@@ -87,14 +93,14 @@ public class DetailFragment extends Fragment {
 
     public void displayDetailedInformation(PlaceDetail info) {
         progressBar.setVisibility(View.GONE);
-        bindOpeningHoursInfo(info.openingHours);
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+
+        if (info.openingHours != null) bindOpeningHoursInfo(inflater, info.openingHours);
+
+        if (info.reviews != null) bindReviewsInfo(inflater, info.avgRating, info.reviews);
     }
 
-    public void bindOpeningHoursInfo(PlaceDetail.OpeningHours openingHours) {
-        if (openingHours == null) {
-            return; //No opening hours info available
-        }
-
+    public void bindOpeningHoursInfo(LayoutInflater inflater, PlaceDetail.OpeningHours openingHours) {
         //Binding open now information
         int openText, openTextColor;
         if (openingHours.isOpenNow) {
@@ -108,7 +114,6 @@ public class DetailFragment extends Fragment {
         tvOpenStatus.setTextColor(getResources().getColor(openTextColor));
 
         //Binding daily timing information
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
         for (String timing : openingHours.dayTimings) {
             TextView timingRow = (TextView) inflater.inflate(R.layout.row_opening_time, llOpeningHrs, false);
             timingRow.setText(timing);
@@ -117,6 +122,24 @@ public class DetailFragment extends Fragment {
 
         //Displaying container
         Utils.animateTransition(openingHrsSection, 600, true);
+    }
+
+    public void bindReviewsInfo(LayoutInflater inflater, float avgRating, PlaceDetail.Review[] reviews) {
+        tvAvgRating.setText(new DecimalFormat("#.#").format(avgRating));
+
+        //Binding review information
+        for (PlaceDetail.Review r : reviews) {
+            View reviewRow = inflater.inflate(R.layout.row_review, llReviews, false);
+
+            ((TextView)reviewRow.findViewById(R.id.tvAuthorName)).setText(r.authorName);
+            ((RatingBar)reviewRow.findViewById(R.id.ratingBar)).setRating(r.rating);
+            ((TextView)reviewRow.findViewById(R.id.tvReviewText)).setText(r.reviewText);
+
+            llReviews.addView(reviewRow);
+        }
+
+        //Displaying container
+        Utils.animateTransition(reviewsSection, 600, true);
     }
 
     private class PlaceDetailResult implements BaseParser.ResultListener<PlaceDetail> {

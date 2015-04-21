@@ -13,8 +13,7 @@
         android:ellipsize="end"
         android:textColor="@color/default_text_color"
         android:textSize="@dimen/default_text_size"
-        android:textStyle="bold"
-        android:text="Suresh Subramaniam"/>
+        android:textStyle="bold"/>
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -22,8 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:isIndicator="true"
-        android:rating="3"/>
+        android:isIndicator="true"/>
 
     <TextView
         android:id="@+id/tvReviewText"
@@ -31,6 +29,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textColor="@color/default_text_color"
-        android:textSize="@dimen/default_text_size"
-        android:text="blah blah blah"/>
+        android:textSize="@dimen/default_text_size"/>
 </LinearLayout>
