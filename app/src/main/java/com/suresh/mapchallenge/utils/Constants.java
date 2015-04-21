@@ -25,4 +25,5 @@ public interface Constants {
      */
     public static final String API_NEARBY_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
     public static final String API_IMAGE_BASE_URL = "https://maps.googleapis.com/maps/api/place/photo";
+    public static final String API_PLACE_DETAIL = "https://maps.googleapis.com/maps/api/place/details/json";
 }

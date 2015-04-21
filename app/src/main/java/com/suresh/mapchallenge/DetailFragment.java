@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.suresh.mapchallenge.api.PlacesApiHelper;
 import com.suresh.mapchallenge.api.model.Place;
+import com.suresh.mapchallenge.api.model.PlaceDetail;
+import com.suresh.mapchallenge.api.parser.BaseParser;
 
 /**
  * Created by suresh on 18/4/15.
@@ -42,6 +45,8 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         place = (Place) getArguments().getSerializable(KEY_PLACE);
+
+        PlacesApiHelper.getPlaceDetails(place.id, new PlaceDetailResult());
     }
 
     @Override
@@ -70,5 +75,13 @@ public class DetailFragment extends Fragment {
         }
         tvTitle.setText(place.name);
         tvAddress.setText(place.address);
+    }
+
+    private class PlaceDetailResult implements BaseParser.ResultListener<PlaceDetail> {
+
+        @Override
+        public void consumeResult(PlaceDetail result, boolean moreResults) {
+            Log.v("test", result.toString());
+        }
     }
 }

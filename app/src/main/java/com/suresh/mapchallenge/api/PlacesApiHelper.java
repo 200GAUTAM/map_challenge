@@ -9,8 +9,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.suresh.mapchallenge.APP;
 import com.suresh.mapchallenge.api.model.Place;
+import com.suresh.mapchallenge.api.model.PlaceDetail;
 import com.suresh.mapchallenge.api.parser.BaseParser;
 import com.suresh.mapchallenge.api.parser.NearbySearchParser;
+import com.suresh.mapchallenge.api.parser.PlaceDetailParser;
 import com.suresh.mapchallenge.utils.Constants;
 
 import java.util.ArrayList;
@@ -71,6 +73,19 @@ public class PlacesApiHelper implements Constants {
         } else {
             APP.getInstance().addRequest(request);
         }
+    }
+
+    public static void getPlaceDetails(String placeId, BaseParser.ResultListener<PlaceDetail> resultListener) {
+        //Prepare the request URL
+        Uri.Builder builder = Uri.parse(API_PLACE_DETAIL).buildUpon();
+        addApiKeyParam(builder);
+        builder.appendQueryParameter("placeid", placeId);
+
+        PlaceDetailParser parser = new PlaceDetailParser(resultListener);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, builder.build().toString(),
+                null, parser, parser);
+
+        APP.getInstance().addRequest(request);
     }
 
     private static void addLocationParam(Uri.Builder builder, LatLng location) {
