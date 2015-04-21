@@ -115,7 +115,10 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
 
     public void displayDetailedInformation() {
         progressBar.setVisibility(View.GONE);
-//        LayoutInflater inflater = LayoutInflater.from(getActivity());
+
+        if (info.phoneNumber != null) {
+            toolbar.inflateMenu(R.menu.fragment_detail_menu);
+        }
 
         if (info.openingHours != null) bindOpeningHoursInfo(info.openingHours);
 
