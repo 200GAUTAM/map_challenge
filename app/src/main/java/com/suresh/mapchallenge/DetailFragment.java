@@ -173,19 +173,26 @@ public class DetailFragment extends Fragment implements ListenScrollView.OnScrol
 
     @Override
     public void onScrollChanged(int l, int t, int oldl, int oldt) {
-        scrollY += (t - oldt);
-        Log.v("scroll", l + ", " + t + ", " + oldl + ", " + oldt);
-
-        if (oldt <= headerHeight) { //In header scroll range
-            doScrollEffect();
+        if (t <= 0 || t >= headerHeight) {
+            if (t <= 0) {
+                scrollY = 0;
+            } else {
+                scrollY = headerHeight;
+            }
+        } else {
+            scrollY = t;
         }
+
+        Log.v("scroll", l + ", " + t + ", " + oldl + ", " + oldt + ", " + scrollY);
+
+        doScrollEffect();
     }
 
     private void doScrollEffect() {
         headerSection.setTranslationY(-scrollY);
         imgBanner.setTranslationY(scrollY * 0.5f);
 
-        float ratio = scrollY / headerHeight;
+        float ratio = (float) scrollY / (float) headerHeight;
         int a = (int) (ratio * 255);
         toolbar.setBackgroundColor(Color.argb(a, 0, 0, 0));
     }
