@@ -26,4 +26,4 @@ In the same project created in the previous step, you can enable the Places API 
 3. Volley (networking + image loading)
 
 ## Known Issues
-1. The black marker on the centre of the map (denoting the centre of the search) fails to show up occassionally.
+1. The black marker on the centre of the map (denoting the centre of the search) fails to show up on rare occassions.
