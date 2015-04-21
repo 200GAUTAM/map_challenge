@@ -10,7 +10,8 @@
     <dimen name="loading_dialog_margin">20dp</dimen>
     <dimen name="zoom_error_margin">70dp</dimen>
     <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="detail_card_corner_radius">2dp</dimen>
     <dimen name="category_list_width">240dp</dimen>
-    <dimen name="divider_height">3dp</dimen>
+    <dimen name="divider_height">2dp</dimen>
     <dimen name="default_text_size">16sp</dimen>
 </resources>
