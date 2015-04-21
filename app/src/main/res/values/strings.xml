@@ -10,4 +10,7 @@
     <string name="search_location_hint">Drag to change search area</string>
     <string name="zoom_in_warning">Zoom in to search</string>
     <string name="zoom_out_warning">Zoom out to search</string>
+    <string name="opening_hours">Opening Hours:</string>
+    <string name="place_open">Now Open</string>
+    <string name="place_closed">Closed</string>
 </resources>

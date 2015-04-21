@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- IMAGE HEADER -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,8 +23,19 @@
             android:background="@drawable/banner_img_gradient"
             android:layout_gravity="bottom"/>
 
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:text="Something something"
+            android:padding="@dimen/content_padding"/>
+
     </FrameLayout>
 
+    <!-- MAIN CONTENT -->
     <ScrollView
         android:id="@+id/svContent"
         android:layout_width="match_parent"
@@ -34,31 +46,108 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            android:padding="@dimen/content_padding"
             android:layout_marginTop="@dimen/dummy_view_height"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvTitle"
+            <android.support.v7.widget.CardView
+                android:id="@+id/detailsSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:textColor="#000000"
-                android:textSize="24sp"
-                android:text="Something something"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="16dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardUseCompatPadding="true">
 
-            <TextView
-                android:id="@+id/tvAddress"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/content_padding"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Address:"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"/>
+
+                    <TextView
+                        android:id="@+id/tvAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="101 Cecil Street, Singapore 201983"
+                        android:textColor="@color/default_text_color"
+                        android:textSize="@dimen/default_text_size"
+                        android:layout_marginTop="8dp"/>
+
+                </LinearLayout>
+
+
+
+            </android.support.v7.widget.CardView>
+
+
+
+            <!-- OPENING HOURS -->
+            <android.support.v7.widget.CardView
+                android:id="@+id/openingHrsSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="101 Cecil Street, Singapore 201983"
-                android:textColor="@color/default_text_color"
-                android:textSize="16sp"/>
+                android:layout_margin="8dp"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardUseCompatPadding="true">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="600dp"/>
+                <LinearLayout
+                    android:id="@+id/llOpeningHrs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/content_padding"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/opening_hours"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="#000000"/>
+
+                        <Space
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent" />
+
+                        <TextView
+                            android:id="@+id/tvOpenStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20sp"
+                            android:textColor="@color/place_closed_text"
+                            android:textStyle="italic"
+                            android:text="@string/place_closed"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/divider_height"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/divider_color"/>
+
+                    <include
+                        layout="@layout/row_opening_time" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
 
         </LinearLayout>
     </ScrollView>

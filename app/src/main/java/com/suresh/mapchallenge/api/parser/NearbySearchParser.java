@@ -33,7 +33,7 @@ public class NearbySearchParser extends BaseParser<JSONObject, ArrayList<Place>>
                 places.add(place);
 
                 //Parse basic info
-                place.id = placeObj.getString("id");
+                place.id = placeObj.getString("place_id");
                 place.name = placeObj.getString("name");
                 place.address = placeObj.getString("vicinity");
                 JSONObject locationObj = placeObj.getJSONObject("geometry").getJSONObject("location");

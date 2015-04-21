@@ -4,4 +4,7 @@
     <color name="default_text_color">#464646</color>
     <color name="loading_section_bg">#c8ffffff</color>
     <color name="settings_btn_bg">#ff2f2f2f</color>
+    <color name="place_open_text">#009400</color>
+    <color name="place_closed_text">#940008</color>
+    <color name="divider_color">#DDDDDD</color>
 </resources>
